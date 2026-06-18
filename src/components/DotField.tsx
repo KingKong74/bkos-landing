@@ -14,9 +14,9 @@ export function DotField() {
   const mouseRef = useRef({ x: -1000, y: -1000 });
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    const cv = canvasRef.current;
+    if (!cv) return;
+    const ctx = cv.getContext("2d");
     if (!ctx) return;
 
     const reduceMotion =
@@ -30,11 +30,11 @@ export function DotField() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     function resize() {
-      width = canvas.offsetWidth;
-      height = canvas.offsetHeight;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
+      width = cv.offsetWidth;
+      height = cv.offsetHeight;
+      cv.width = width * dpr;
+      cv.height = height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       const spacing = 28;
       dots = [];
@@ -47,7 +47,7 @@ export function DotField() {
     }
 
     function onMouseMove(e: MouseEvent) {
-      const rect = canvas.getBoundingClientRect();
+      const rect = cv.getBoundingClientRect();
       mouseRef.current = {
         x: e.clientX - rect.left,
         y: e.clientY - rect.top,
@@ -59,7 +59,6 @@ export function DotField() {
     }
 
     function frame() {
-      if (!ctx) return;
       ctx.clearRect(0, 0, width, height);
       const m = mouseRef.current;
       const radius = 180;
@@ -87,21 +86,18 @@ export function DotField() {
 
     resize();
     const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
+    ro.observe(cv);
 
     if (!reduceMotion) {
       window.addEventListener("mousemove", onMouseMove);
       window.addEventListener("mouseleave", onMouseLeave);
       frame();
     } else {
-      // Static one-shot render
-      if (ctx) {
-        for (const dot of dots) {
-          ctx.fillStyle = `rgba(245, 166, 35, ${dot.baseAlpha})`;
-          ctx.beginPath();
-          ctx.arc(dot.x, dot.y, 1.3, 0, Math.PI * 2);
-          ctx.fill();
-        }
+      for (const dot of dots) {
+        ctx.fillStyle = `rgba(245, 166, 35, ${dot.baseAlpha})`;
+        ctx.beginPath();
+        ctx.arc(dot.x, dot.y, 1.3, 0, Math.PI * 2);
+        ctx.fill();
       }
     }
 
