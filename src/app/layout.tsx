@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { SmoothScroll } from "@/components/SmoothScroll";
 import "./globals.css";
+import "lenis/dist/lenis.css";
 
 export const metadata: Metadata = {
   title: "Bailey King — bkos.dev",
@@ -26,7 +28,6 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
           rel="stylesheet"
         />
-        {/* Cloudflare Web Analytics — replace TOKEN_HERE with your token, or delete this line if not using */}
         {process.env.NEXT_PUBLIC_CF_ANALYTICS_TOKEN && (
           <script
             defer
@@ -35,7 +36,10 @@ export default function RootLayout({
           ></script>
         )}
       </head>
-      <body>{children}</body>
+      <body>
+        <SmoothScroll />
+        {children}
+      </body>
     </html>
   );
 }
