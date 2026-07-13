@@ -5,7 +5,9 @@ import Link from "next/link";
 import { Avatar } from "./Avatar";
 import { AdminGate } from "./AdminGate";
 import { DotField } from "./DotField";
+import { Magnetic } from "./Magnetic";
 import { RotatingWord } from "./RotatingWord";
+import { useSiteContent } from "@/lib/siteContent";
 
 // Random Aussie-flavoured greeting — picks a different one on each visit
 const GREETINGS = ["Hi", "Hey", "G'day", "Howdy", "Hello", "Heya"];
@@ -17,6 +19,7 @@ function pickGreeting(): string {
 
 export function Hero({ weather }: { weather: { temp: number | null; emoji: string } }) {
   const reduceMotion = useReducedMotion();
+  const { availability } = useSiteContent();
   // Computed once on mount; not animated. Slightly inconsistent SSR↔CSR is fine.
   const greeting = typeof window === "undefined" ? "Hi" : pickGreeting();
   const headingText = `${greeting}, I'm Bailey.`;
@@ -108,8 +111,6 @@ export function Hero({ weather }: { weather: { temp: number | null; emoji: strin
             />
             bkos.dev
           </span>
-          <span>·</span>
-          <span>Brisbane, AU</span>
           {weather.temp !== null && (
             <>
               <span>·</span>
@@ -146,7 +147,7 @@ export function Hero({ weather }: { weather: { temp: number | null; emoji: strin
                 color: idx >= headingText.length - 7 ? "#f5a623" : undefined,
               }}
             >
-              {char === " " ? "\u00A0" : char}
+              {char === " " ? " " : char}
             </motion.span>
           ))}
         </h1>
@@ -166,7 +167,6 @@ export function Hero({ weather }: { weather: { temp: number | null; emoji: strin
             flexWrap: "wrap",
           }}
         >
-          <span>A Brisbane</span>
           <RotatingWord />
           <span
             style={{
@@ -175,7 +175,7 @@ export function Hero({ weather }: { weather: { temp: number | null; emoji: strin
               fontFamily: "var(--font-mono)",
             }}
           >
-            / also: student, builder, traveller
+            / depends when you ask
           </span>
         </motion.div>
 
@@ -192,44 +192,74 @@ export function Hero({ weather }: { weather: { temp: number | null; emoji: strin
             lineHeight: 1.6,
           }}
         >
-          My corner of the internet. Self-hosted on a mini PC under my desk. Scroll for projects, photos, and what I&apos;m listening to right this second.
+          Accountant at a mid-tier firm, moving into forensic work. CA ANZ candidate. I also
+          build software — everything on this domain runs on a mini PC under my desk.
+        </motion.p>
+
+        {/* Availability line */}
+        <motion.p
+          initial={reduceMotion ? undefined : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: letters.length * 0.035 + 0.35, duration: 0.6 }}
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 12,
+            color: "#7a7770",
+            marginTop: 14,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+          }}
+        >
+          <span
+            aria-hidden
+            style={{
+              width: 6,
+              height: 6,
+              background: "#5dcaa5",
+              borderRadius: "50%",
+              display: "inline-block",
+              flexShrink: 0,
+            }}
+          />
+          based in Brisbane · {availability}
         </motion.p>
 
         {/* CTAs */}
         <motion.div
           initial={reduceMotion ? undefined : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: letters.length * 0.035 + 0.4, duration: 0.6 }}
-          style={{ display: "flex", gap: 10, marginTop: 32, flexWrap: "wrap" }}
+          transition={{ delay: letters.length * 0.035 + 0.45, duration: 0.6 }}
+          style={{ display: "flex", gap: 10, marginTop: 32, flexWrap: "wrap", alignItems: "center" }}
         >
-          <a
-            href="https://os.bkos.dev"
-            style={{
-              padding: "11px 20px",
-              background: "#f5a623",
-              color: "#0f0e0c",
-              borderRadius: 10,
-              fontSize: 14,
-              fontWeight: 500,
-              textDecoration: "none",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-              transition: "transform 0.15s ease, box-shadow 0.15s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-1px)";
-              e.currentTarget.style.boxShadow = "0 6px 16px rgba(245,166,35,0.35)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "none";
-            }}
-          >
-            Open bailey.os <span aria-hidden>↗</span>
-          </a>
+          <Magnetic>
+            <Link
+              href="/work"
+              style={{
+                padding: "11px 20px",
+                background: "#f5a623",
+                color: "#0f0e0c",
+                borderRadius: 10,
+                fontSize: 14,
+                fontWeight: 500,
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                transition: "box-shadow 0.15s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = "0 6px 16px rgba(245,166,35,0.35)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            >
+              See my work <span aria-hidden>→</span>
+            </Link>
+          </Magnetic>
           <Link
-            href="#projects"
+            href="#building"
             style={{
               padding: "11px 20px",
               background: "transparent",
@@ -250,8 +280,27 @@ export function Hero({ weather }: { weather: { temp: number | null; emoji: strin
               e.currentTarget.style.borderColor = "#3a3935";
             }}
           >
-            See projects
+            Currently building
           </Link>
+          <a
+            href="https://os.bkos.dev"
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: 12,
+              color: "#7a7770",
+              textDecoration: "none",
+              padding: "11px 8px",
+              transition: "color 0.15s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "#f5a623";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "#7a7770";
+            }}
+          >
+            open bailey.os ↗
+          </a>
         </motion.div>
       </div>
 

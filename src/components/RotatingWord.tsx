@@ -2,28 +2,23 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useSiteContent } from "@/lib/siteContent";
 
-// Edit these to change what rotates
-const ROLES = [
-  "developer",
-  "student",
-  "builder",
-  "traveller",
-  "coffee snob",
-  "tinkerer",
-];
-
+// Words come from the content store — editable in the admin panel
 const INTERVAL_MS = 2400;
 
 export function RotatingWord() {
+  const { heroWords } = useSiteContent();
   const [i, setI] = useState(0);
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    if (reduceMotion) return;
-    const id = setInterval(() => setI((x) => (x + 1) % ROLES.length), INTERVAL_MS);
+    if (reduceMotion || heroWords.length < 2) return;
+    const id = setInterval(() => setI((x) => (x + 1) % heroWords.length), INTERVAL_MS);
     return () => clearInterval(id);
-  }, [reduceMotion]);
+  }, [reduceMotion, heroWords.length]);
+
+  const word = heroWords[i % heroWords.length] ?? "accountant";
 
   return (
     <span
@@ -36,7 +31,7 @@ export function RotatingWord() {
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.span
-          key={i}
+          key={word}
           initial={reduceMotion ? false : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
@@ -52,7 +47,7 @@ export function RotatingWord() {
             whiteSpace: "nowrap",
           }}
         >
-          {ROLES[i]}
+          {word}
         </motion.span>
       </AnimatePresence>
     </span>
