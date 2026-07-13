@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdminEditor } from "@/components/AdminEditor";
 import { getAllTrips } from "@/lib/trips";
 import { getAllPhotos } from "@/lib/photos";
 import { getBuildTime, formatTimeAgo } from "@/lib/build";
@@ -49,7 +50,9 @@ export default function AdminPage() {
           <h1 style={{ fontSize: 28, fontWeight: 500, margin: "10px 0 4px", letterSpacing: "-0.02em" }}>
             Admin
           </h1>
-          <p style={{ fontSize: 13, color: "#a8a59c", margin: 0 }}>Read-only status for now.</p>
+          <p style={{ fontSize: 13, color: "#a8a59c", margin: 0 }}>
+            Site status + content editor.
+          </p>
         </div>
         <form action="/api/admin/logout" method="POST">
           <button
@@ -117,6 +120,22 @@ export default function AdminPage() {
           </div>
         ))}
       </div>
+
+      <section style={{ marginBottom: 32 }}>
+        <h2
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 12,
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+            color: "#7a7770",
+            marginBottom: 12,
+          }}
+        >
+          Site content
+        </h2>
+        <AdminEditor />
+      </section>
 
       <section style={{ marginBottom: 32 }}>
         <h2
