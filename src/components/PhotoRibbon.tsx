@@ -3,11 +3,17 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import type { Photo } from "@/lib/photos";
+import { useSiteContent } from "@/lib/siteContent";
+
+// Warm placeholder tints while real photo files are missing
+const FALLBACK_TINTS = ["#2a2013", "#1d2420", "#241d26", "#20222a"];
 
 export function PhotoRibbon({ photos }: { photos: Photo[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [errored, setErrored] = useState<Record<string, boolean>>({});
+  const { sections } = useSiteContent();
 
   // Make horizontal scroll respond to vertical wheel (common pattern for ribbons)
   function handleWheel(e: React.WheelEvent) {
@@ -18,24 +24,12 @@ export function PhotoRibbon({ photos }: { photos: Photo[] }) {
     }
   }
 
-  if (photos.length === 0) return null;
+  if (!sections.photos || photos.length === 0) return null;
 
   return (
     <section style={{ padding: "48px 0 24px", overflow: "hidden" }}>
-      <div style={{ padding: "0 16px", marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <h2
-          style={{
-            fontSize: 14,
-            fontWeight: 500,
-            margin: 0,
-            color: "#a8a59c",
-            fontFamily: "var(--font-mono)",
-            textTransform: "uppercase",
-            letterSpacing: "0.08em",
-          }}
-        >
-          Recent photos
-        </h2>
+      <div style={{ maxWidth: 1100, margin: "0 auto 20px", padding: "0 24px", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+        <h2 className="section-label">Snapshots</h2>
         <Link
           href="/photos"
           style={{
@@ -56,7 +50,7 @@ export function PhotoRibbon({ photos }: { photos: Photo[] }) {
           display: "flex",
           gap: 12,
           overflowX: "auto",
-          padding: "0 16px 16px",
+          padding: "0 24px 16px",
           scrollSnapType: "x mandatory",
           scrollbarWidth: "thin",
         }}
@@ -82,12 +76,40 @@ export function PhotoRibbon({ photos }: { photos: Photo[] }) {
             }}
           >
             <Link href="/photos" style={{ display: "block", height: "100%" }}>
-              <img
-                src={p.src}
-                alt={p.alt}
-                loading="lazy"
-                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-              />
+              {errored[p.src] ? (
+                // Missing file — styled placeholder that still reads intentional
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    background: `linear-gradient(160deg, ${FALLBACK_TINTS[i % FALLBACK_TINTS.length]}, #141311)`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: 16,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: 11,
+                      color: "#56544f",
+                      textAlign: "center",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {p.alt}
+                  </span>
+                </div>
+              ) : (
+                <img
+                  src={p.src}
+                  alt={p.alt}
+                  loading="lazy"
+                  onError={() => setErrored((prev) => ({ ...prev, [p.src]: true }))}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                />
+              )}
               <div
                 style={{
                   position: "absolute",

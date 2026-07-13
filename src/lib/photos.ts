@@ -9,6 +9,13 @@ export interface Photo {
 
 // ─── Add new photos by appending to this array ───────────────────────────────
 //
+// Curation note: this ribbon reads professional-with-personality — workspace,
+// whiteboards, code on screens, events, and at most a couple of travel shots.
+// Holiday albums live under /trips instead.
+//
+// PLACEHOLDERS: the files below don't exist yet. Drop real images with these
+// names into /public/photos/ (ratios noted per entry) and adjust alt text.
+//
 // To add photos:
 //   1. Drop image files in /public/photos/
 //   2. Add an entry below with src + alt + width/height
@@ -18,13 +25,14 @@ export interface Photo {
 // ────────────────────────────────────────────────────────────────────────────
 
 export const photos: Photo[] = [
-  // Placeholder examples — replace with real files
-  { src: "/photos/sample-1.jpg", alt: "Brisbane river at dusk", width: 800, height: 600, date: "2026-04-12" },
-  { src: "/photos/sample-2.jpg", alt: "Coffee, Northshore", width: 800, height: 800, date: "2026-04-15" },
-  { src: "/photos/sample-3.jpg", alt: "Daintree canopy", width: 600, height: 800, date: "2026-05-14" },
-  { src: "/photos/sample-4.jpg", alt: "Beach, Cape Trib", width: 800, height: 600, date: "2026-05-15" },
-  { src: "/photos/sample-5.jpg", alt: "BOSGAME mini PC arrival", width: 800, height: 800, date: "2026-06-05" },
-  { src: "/photos/sample-6.jpg", alt: "Desk setup, June", width: 800, height: 600, date: "2026-06-10" },
+  { src: "/photos/desk-setup.jpg", alt: "Desk setup — mini PC humming under the monitor", width: 800, height: 600, date: "2026-06-10" },
+  { src: "/photos/whiteboard-schema.jpg", alt: "Whiteboard — sketching the moniqr ledger schema", width: 800, height: 600, date: "2026-05-28" },
+  { src: "/photos/code-screen.jpg", alt: "BK-OS window manager mid-refactor", width: 800, height: 800, date: "2026-06-02" },
+  { src: "/photos/ca-study.jpg", alt: "CA tax notes and a long black", width: 800, height: 800, date: "2026-04-20" },
+  { src: "/photos/meetup.jpg", alt: "Brisbane developer meetup", width: 600, height: 800, date: "2026-03-14" },
+  { src: "/photos/homelab.jpg", alt: "The homelab shelf — BOSGAME E2 and friends", width: 800, height: 600, date: "2026-06-05" },
+  { src: "/photos/pour-over.jpg", alt: "Saturday V60", width: 800, height: 800, date: "2026-05-03" },
+  { src: "/photos/daintree.jpg", alt: "Daintree canopy — the one holiday shot", width: 600, height: 800, date: "2026-05-14" },
 ];
 
 export function getAllPhotos(): Photo[] {
