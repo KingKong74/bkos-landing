@@ -1,5 +1,6 @@
 import { Hero } from "@/components/Hero";
 import { CurrentlyBuilding } from "@/components/CurrentlyBuilding";
+import { Personal } from "@/components/Personal";
 import { PhotoRibbon } from "@/components/PhotoRibbon";
 import { VibeCheck } from "@/components/VibeCheck";
 import { getAllPhotos } from "@/lib/photos";
@@ -21,6 +22,9 @@ export default async function HomePage() {
 
       {/* Photo ribbon */}
       <PhotoRibbon photos={photos} />
+
+      {/* Personal + connect */}
+      <Personal />
 
       {/* Vibe check */}
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
