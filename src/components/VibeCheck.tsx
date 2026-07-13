@@ -3,6 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { useSiteContent } from "@/lib/siteContent";
 
 interface Track {
   isPlaying: boolean;
@@ -16,6 +17,7 @@ interface Track {
 export function VibeCheck({ deployLabel }: { deployLabel: string }) {
   const [track, setTrack] = useState<Track | null>(null);
   const reduceMotion = useReducedMotion();
+  const { sections } = useSiteContent();
 
   useEffect(() => {
     let mounted = true;
@@ -37,8 +39,10 @@ export function VibeCheck({ deployLabel }: { deployLabel: string }) {
     };
   }, []);
 
+  if (!sections.vibe) return null;
+
   return (
-    <section style={{ padding: "48px 16px 24px" }}>
+    <section style={{ padding: "48px 24px 24px" }}>
       <motion.div
         initial={reduceMotion ? false : { opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}

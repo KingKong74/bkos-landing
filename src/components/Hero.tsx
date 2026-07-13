@@ -75,8 +75,8 @@ export function Hero({ weather }: { weather: { temp: number | null; emoji: strin
         }}
       />
 
-      {/* Avatar in top-right with admin gate */}
-      <div style={{ position: "absolute", top: 24, right: 24, zIndex: 10 }}>
+      {/* Avatar in top-right with admin gate — drops below the fixed nav on narrow screens */}
+      <div style={{ position: "absolute", top: "max(24px, calc(120px - 8vw))", right: 24, zIndex: 10 }}>
         <AdminGate>
           <Avatar size={48} />
         </AdminGate>

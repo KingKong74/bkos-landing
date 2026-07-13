@@ -5,7 +5,7 @@ import { getAllTrips } from "@/lib/trips";
 export default function TripsPage() {
   const trips = getAllTrips();
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 16px 64px" }}>
+    <main style={{ maxWidth: 900, margin: "0 auto", padding: "96px 24px 64px" }}>
       <div style={{ marginBottom: 32 }}>
         <Link
           href="/"

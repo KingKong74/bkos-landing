@@ -38,7 +38,7 @@ export default function AdminPage() {
   ];
 
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 16px 64px" }}>
+    <main style={{ maxWidth: 900, margin: "0 auto", padding: "96px 24px 64px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
         <div>
           <Link

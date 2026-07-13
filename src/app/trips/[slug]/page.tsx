@@ -14,7 +14,7 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
   if (!trip) notFound();
 
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: "24px 16px 64px" }}>
+    <main style={{ maxWidth: 900, margin: "0 auto", padding: "96px 24px 64px" }}>
       <div style={{ marginBottom: 24 }}>
         <Link
           href="/trips"

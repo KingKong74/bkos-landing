@@ -25,7 +25,7 @@ export default function PhotosPage() {
   }, [openIndex, photos.length]);
 
   return (
-    <main style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 16px 64px" }}>
+    <main style={{ maxWidth: 1100, margin: "0 auto", padding: "96px 24px 64px" }}>
       <div style={{ marginBottom: 32 }}>
         <Link
           href="/"
