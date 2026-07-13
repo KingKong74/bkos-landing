@@ -14,10 +14,13 @@ export function DotField() {
   const mouseRef = useRef({ x: -1000, y: -1000 });
 
   useEffect(() => {
-    const cv = canvasRef.current;
-    if (!cv) return;
-    const ctx = cv.getContext("2d");
-    if (!ctx) return;
+    const maybeCanvas = canvasRef.current;
+    if (!maybeCanvas) return;
+    const maybeCtx = maybeCanvas.getContext("2d");
+    if (!maybeCtx) return;
+    // Non-null consts so the closures below stay narrowed
+    const cv = maybeCanvas;
+    const ctx = maybeCtx;
 
     const reduceMotion =
       typeof window !== "undefined" &&
