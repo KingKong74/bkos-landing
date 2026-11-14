@@ -53,13 +53,8 @@ export default async function AdminPage() {
         </section>
 
         <section>
-          <div className="eyebrow" style={{ marginBottom: 12 }}>Files</div>
-          <AdminFiles initial={mediaStatus()} />
-        </section>
-
-        <section>
           <div className="eyebrow" style={{ marginBottom: 12 }}>Content</div>
-          <AdminEditor initial={getContent()} hasSaved={hasSavedContent()} />
+          <AdminEditor initial={getContent()} hasSaved={hasSavedContent()} filesPanel={<AdminFiles initial={mediaStatus()} />} />
         </section>
 
         <section>

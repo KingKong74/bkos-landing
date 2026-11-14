@@ -58,7 +58,7 @@ export const roles: Role[] = [
     period: "Feb 2026 – Oct 2026",
     type: "Full-time · Brisbane CBD",
     summary:
-      "Tax and compliance work across individuals, trusts and companies, under the supervision of Chartered Accountants.",
+      "Tax and compliance work across individuals, trusts and companies.",
     bullets: [
       "Prepared and reviewed tax returns across individuals, trusts and companies in line with current legislation and ATO rulings",
       "Provided compliance-focused tax advice, including CGT, structuring and small business concessions",
@@ -94,10 +94,17 @@ export interface CAModule {
   status: "complete" | "in progress" | "upcoming";
 }
 
+// CA ANZ CA Program: 7 core subjects + 2 electives.
 export const caModules: CAModule[] = [
+  { name: "Ethics and Sustainability", status: "upcoming" },
+  { name: "Risk, Technology and Artificial Intelligence", status: "upcoming" },
+  { name: "Financial Accounting and Reporting", status: "upcoming" },
   { name: "Australian Taxation", status: "complete" },
-  { name: "Financial Modelling", status: "complete" },
-  { name: "Data Analytics and Insights", status: "in progress" },
+  { name: "Strategy and Business Performance", status: "upcoming" },
+  { name: "Audit and Analytics", status: "upcoming" },
+  { name: "Integrated Chartered Accounting Practice", status: "upcoming" },
+  { name: "Financial Modelling (elective)", status: "complete" },
+  { name: "Data Analytics and Insights (elective)", status: "in progress" },
 ];
 
 export const caProgram: Degree = {
@@ -250,6 +257,13 @@ export const DEFAULT_COPY = {
   projectsSubtitle: "Software built and run on my own infrastructure.",
   contactTitle: "Get in touch",
   contactSubtitle: "Recruiting, a systems or automation question, or comparing homelab notes — all welcome.",
+  nowPlayingLabel: "now playing",
+  lastPlayedLabel: "last played",
+  weatherNowLabel: "right now",
+  weatherFallback: "Live from Open-Meteo",
+  roleToLabel: "to",
+  visitLabel: "Visit",
+  noLinkLabel: "self-hosted",
   footer: "© 2026 — running on a mini PC under my desk · self-hosted with love",
   metaTitle: "Bailey King — accountant & systems analyst",
   metaDescription:

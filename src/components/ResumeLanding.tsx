@@ -124,7 +124,7 @@ export function ResumeLanding({ content, weather, media }: Props) {
   }
 
   const tempText = weather.temp == null ? "—°C" : `${weather.temp}°C`;
-  const condText = weather.description ? cap(weather.description) : "Live from Open-Meteo";
+  const condText = weather.description ? cap(weather.description) : c.weatherFallback;
 
   const resumeBtn = (label: string, cls: string) =>
     media.resume ? (
@@ -137,7 +137,7 @@ export function ResumeLanding({ content, weather, media }: Props) {
         {track.albumImage && <img src={track.albumImage} alt="" />}
       </div>
       <div>
-        <div className="mono" style={{ fontSize: 11, color: "var(--acc)" }}>{track.isPlaying ? "now playing" : "last played"}</div>
+        <div className="mono" style={{ fontSize: 11, color: "var(--acc)" }}>{track.isPlaying ? c.nowPlayingLabel : c.lastPlayedLabel}</div>
         <div style={{ fontSize: 14, fontWeight: 500 }}>{track.title} · <span className="mute">{track.artist}</span></div>
       </div>
     </a>
@@ -270,7 +270,7 @@ export function ResumeLanding({ content, weather, media }: Props) {
               <div className="rl-grid-auto" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))", marginTop: 32 }}>
                 {projects.map((p) => (
                   <a key={p.id} data-reveal href={p.link} target={p.link ? "_blank" : undefined} rel="noreferrer" className="rl-proj card-link" style={p.link ? undefined : { cursor: "default" }}>
-                    <div className="rl-shot" style={{ aspectRatio: "4 / 3" }}>{host(p.link) || "self-hosted"}</div>
+                    <div className="rl-shot" style={{ aspectRatio: "4 / 3" }}>{host(p.link) || c.noLinkLabel}</div>
                     <div style={{ padding: "18px 20px" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
                         <span style={{ fontWeight: 600, fontSize: 18 }}>{p.name}</span>
@@ -346,7 +346,7 @@ export function ResumeLanding({ content, weather, media }: Props) {
                     <div key={r.id} className="rl-role">
                       <div className="rl-role-date" style={{ paddingTop: 18 }}>
                         <div style={{ fontWeight: 600, fontSize: 22, lineHeight: 1 }}>{r.start}</div>
-                        <div className="mono mute" style={{ fontSize: 12, marginTop: 4 }}>to {r.end}</div>
+                        <div className="mono mute" style={{ fontSize: 12, marginTop: 4 }}>{c.roleToLabel} {r.end}</div>
                       </div>
                       <div className="rl-role-box">
                         <button type="button" className="rl-toggle" aria-expanded={o} onClick={() => setOpen((s) => ({ ...s, [r.id]: !o }))}>
@@ -444,14 +444,14 @@ export function ResumeLanding({ content, weather, media }: Props) {
                   {track.albumImage && <img src={track.albumImage} alt="" />}
                 </div>
                 <div style={{ minWidth: 0 }}>
-                  <div className="mono" style={{ fontSize: 11, color: "var(--acc)" }}>{track.isPlaying ? "now playing" : "last played"}</div>
+                  <div className="mono" style={{ fontSize: 11, color: "var(--acc)" }}>{track.isPlaying ? c.nowPlayingLabel : c.lastPlayedLabel}</div>
                   <div style={{ fontWeight: 600, fontSize: 14 }}>{track.title}</div>
                   <div className="mute" style={{ fontSize: 13 }}>{track.artist}</div>
                 </div>
               </a>
             )}
             <div className="card" style={{ padding: 20 }} hidden={!sec.weather}>
-              <div className="mono" style={{ fontSize: 11, color: "var(--pri)" }}>{c.city.toLowerCase()} right now</div>
+              <div className="mono" style={{ fontSize: 11, color: "var(--pri)" }}>{c.city.toLowerCase()} {c.weatherNowLabel}</div>
               <div style={{ fontSize: 32, fontWeight: 600, lineHeight: 1.2, marginTop: 4 }}>{tempText}</div>
               <div className="mute" style={{ fontSize: 14 }}>{condText}</div>
             </div>
@@ -466,7 +466,7 @@ export function ResumeLanding({ content, weather, media }: Props) {
           <div className="rl-grid-auto" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", marginTop: 32 }}>
             {projects.map((p) => (
               <div key={p.id} className="card" style={{ overflow: "hidden", display: "flex", flexDirection: "column" }}>
-                <div className="rl-shot" style={{ aspectRatio: "16 / 10" }}>{host(p.link) || "self-hosted"}</div>
+                <div className="rl-shot" style={{ aspectRatio: "16 / 10" }}>{host(p.link) || c.noLinkLabel}</div>
                 <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
                     <span style={{ fontWeight: 600, fontSize: 18 }}>{p.name}</span>
@@ -477,7 +477,7 @@ export function ResumeLanding({ content, weather, media }: Props) {
                   <div className="mono mute" style={{ fontSize: 12 }}>{p.tech.join(" · ")}</div>
                   {p.link && (
                     <a href={p.link} target="_blank" rel="noreferrer" style={{ marginTop: "auto", paddingTop: 8, fontWeight: 600, fontSize: 14, color: "var(--pri)" }}>
-                      Visit {host(p.link)} ↗
+                      {c.visitLabel} {host(p.link)} ↗
                     </a>
                   )}
                 </div>
