@@ -14,7 +14,7 @@ export const INTRO =
   "Accountant in Business Services Advisory and Systems Analyst at HMW Group. I analyse existing systems and workflows, redesign them for efficiency, and use AI to automate repetitive work. CA ANZ candidate.";
 
 export const ABOUT =
-  "Accountant in Business Services Advisory and Systems Analyst at HMW Group in Brisbane City. I advise clients, most of them in property development, and analyse the systems and workflows behind that work to make it more efficient, using AI and automation to remove repetitive manual tasks. I hold a double degree from QUT in Business (Accounting) and Information Technology (Computer Science), and I'm completing the CA ANZ Graduate Diploma of Chartered Accounting. Before HMW I worked in business advisory at Vincents and as an assistant accountant at Absolute Business Solutions, after almost nine years in Woolworths management, which taught me how to lead a team and run an operation. Outside practice, I build financial and infrastructure software, including an accounting platform for Australian sole traders and a self-hosted personal operating system.";
+  "Accountant in Business Services Advisory and Systems Analyst at HMW Group in Brisbane City. I advise clients, most of them in property development, and analyse the systems and workflows behind that work to make it more efficient, using AI and automation to remove repetitive manual tasks. I hold a double degree from QUT in Business (Accounting) and Information Technology (Computer Science), and I'm completing the CA ANZ Graduate Diploma of Chartered Accounting. Before HMW I worked in business advisory at Vincents and as an assistant accountant at Absolute Business Solutions. Outside practice, I build financial and infrastructure software, including an accounting platform for Australian sole traders and a self-hosted personal operating system.";
 
 export interface Role {
   id: string;
@@ -85,24 +85,6 @@ export const roles: Role[] = [
       "Automated routine processes with Excel VBA and macros",
     ],
     skills: ["BAS", "Bookkeeping", "Xero", "MYOB", "Excel VBA"],
-  },
-  {
-    id: "woolworths",
-    org: "Woolworths",
-    title: "Department Manager / 2IC (various roles)",
-    start: "2016",
-    end: "2025",
-    period: "Sep 2016 – Mar 2025",
-    type: "Full-time · Woolworths Supermarkets & Metro",
-    summary:
-      "Nearly nine years from the shop floor to running departments: leading replenishment, managing inventory, rostering teams and acting as duty manager.",
-    bullets: [
-      "Roles held: Night Replenishment Manager / 2IC, Grocery (Inventory) Manager / 2IC, Fruit & Veg Manager, Duty Manager / Supervisor",
-      "Led replenishment operations and ran the store as duty manager",
-      "Supervised and motivated teams, managed inventory and coordinated rostering",
-      "Monitored KPIs and analysed sales data to drive growth; trained staff and gave performance feedback",
-    ],
-    skills: ["Team leadership", "Inventory management", "Rostering", "KPI analysis"],
   },
 ];
 

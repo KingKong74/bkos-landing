@@ -259,7 +259,7 @@ export function ResumeLanding({ weather, hasResumePdf, hasHeroImage, hasAvatar }
             <section data-reveal className="rl-exp">
               <div>
                 <div className="eyebrow">Experience</div>
-                <h2 className="h2">From the shop floor to the ledger to the systems behind it.</h2>
+                <h2 className="h2">The accounting, and the systems behind it.</h2>
                 <button type="button" className="btn btn-ghost" style={{ marginTop: 20 }} onClick={() => go("resume")}>Full resume →</button>
               </div>
               <div>
