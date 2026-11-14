@@ -121,7 +121,7 @@ export const skillGroups: { domain: string; skills: string[] }[] = [
   { domain: "Systems & AI", skills: ["Systems analysis", "Workflow design", "Process automation (Excel VBA, scripting)", "AI-assisted workflows (OpenAI, Claude)"] },
   { domain: "Data & modelling", skills: ["Advanced Excel", "Financial modelling", "Dashboarding (Excel / Google Sheets)", "SQL"] },
   { domain: "Development", skills: ["Python", "JavaScript / TypeScript", "C#", "Next.js / React", "Postgres", "MongoDB", "Docker"] },
-  { domain: "Working style", skills: ["Workflow coordination", "Communication", "Critical thinking", "Problem solving", "Team leadership"] },
+  { domain: "Working style", skills: ["Workflow coordination", "Communication", "Critical thinking", "Problem solving"] },
 ];
 
 export const toolkit = [
