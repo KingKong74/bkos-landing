@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const EMPLOYER = "HMW Group";
-export const LOCATION = "Brisbane City, QLD";
+export const LOCATION = "Brisbane, QLD";
 
 export const HEADLINE =
   "Accountant, Business Services Advisory · Systems Analyst · CA ANZ candidate";
@@ -14,14 +14,15 @@ export const INTRO =
   "Accountant in Business Services Advisory and Systems Analyst at HMW Group. I analyse existing systems and workflows, redesign them for efficiency, and use AI to automate repetitive work. CA ANZ candidate.";
 
 export const ABOUT =
-  "Accountant in Business Services Advisory and Systems Analyst at HMW Group in Brisbane City. I advise SME and family-group clients, and analyse the systems and workflows behind that work to make it more efficient, using AI and automation to remove repetitive manual tasks. Currently completing the CA ANZ Chartered Accountants Program. Outside practice, I build financial and infrastructure software, including an accounting platform for Australian sole traders and a self-hosted personal operating system.";
+  "Accountant in Business Services Advisory and Systems Analyst at HMW Group in Brisbane City. I advise SME and family-group clients, and analyse the systems and workflows behind that work to make it more efficient, using AI and automation to remove repetitive manual tasks. I hold a double degree from QUT in Business (Accounting) and Information Technology (Computer Science), and I'm completing the CA ANZ Graduate Diploma of Chartered Accounting. Before HMW I worked in business advisory at Vincents and as an assistant accountant at Absolute Business Solutions, after almost nine years in Woolworths management, which taught me how to lead a team and run an operation. Outside practice, I build financial and infrastructure software, including an accounting platform for Australian sole traders and a self-hosted personal operating system.";
 
 export interface Role {
   id: string;
+  org: string;
   title: string;
   start: string;
   end: string;
-  dur: string;
+  period: string;
   type: string;
   summary: string;
   bullets: string[];
@@ -30,38 +31,78 @@ export interface Role {
 
 export const roles: Role[] = [
   {
-    id: "r1",
+    id: "hmw",
+    org: "HMW Group",
     title: "Accountant, Business Services Advisory & Systems Analyst",
-    start: "2023",
+    start: "2026",
     end: "present",
-    dur: "3 yrs",
-    type: "Full-time",
+    period: "Oct 2026 – present",
+    type: "Full-time · Brisbane City",
     summary:
       "Dual role across business services advisory and internal systems. Advising SME and family-group clients while analysing the firm's systems and workflows, identifying inefficiencies, and building automated, AI-assisted processes to replace manual work.",
     bullets: [
       "Analysing current systems and workflows to identify bottlenecks, duplicated effort and manual handling",
       "Designing and implementing AI-assisted automation for recurring accounting and administrative tasks",
       "Compliance and advisory work across a portfolio of SME and family-group clients",
-      "Scripted repetitive data-cleanup steps that turned multi-day reconciliations into same-day jobs",
       "Day-to-day in XPA, Excel, AI tooling, and increasingly my own software",
     ],
     skills: ["Systems analysis", "Process improvement", "AI automation", "Australian tax", "XPA"],
   },
   {
-    id: "r2",
-    title: "Undergraduate to Graduate Accountant",
-    start: "2021",
-    end: "2023",
-    dur: "2 yrs",
-    type: "Part-time → Full-time",
+    id: "vincents",
+    org: "Vincents",
+    title: "Graduate Accountant, Business Advisory",
+    start: "2026",
+    end: "2026",
+    period: "Feb 2026 – Oct 2026",
+    type: "Full-time · Brisbane CBD",
     summary:
-      "Started part-time while studying, went full-time after graduating. Learned the fundamentals the slow, correct way: workpapers, reconciliations, tax returns, and asking the second question.",
+      "Tax and compliance work across individuals, trusts and companies, under the supervision of Chartered Accountants.",
     bullets: [
-      "Preparation of financial statements and income tax returns across entity types — companies, trusts, partnerships, SMSFs",
-      "BAS and compliance work for a broad SME client base",
-      "Built the habit of automating anything I had to do three times",
+      "Prepared and reviewed tax returns across individuals, trusts and companies in line with current legislation and ATO rulings",
+      "Provided compliance-focused tax advice, including CGT, structuring and small business concessions",
+      "Coordinated client handovers and managed workflow, deadlines and job progress",
+      "Performed month-end processes and financial reporting for business clients",
+      "Contributed to weekly technical tax discussions and knowledge-sharing sessions",
     ],
-    skills: ["Financial statements", "Tax compliance", "BAS", "Workpapers"],
+    skills: ["Tax returns", "CGT", "Small business concessions", "Financial reporting"],
+  },
+  {
+    id: "abs",
+    org: "Absolute Business Solutions",
+    title: "Assistant Accountant / Bookkeeper",
+    start: "2024",
+    end: "2026",
+    period: "Dec 2024 – Feb 2026",
+    type: "Part-time",
+    summary:
+      "BAS, tax returns and bookkeeping across multiple clients while finishing university, and my first taste of automating the repetitive parts.",
+    bullets: [
+      "Prepared BAS and tax returns and maintained financial records across multiple clients",
+      "Bank reconciliations and general bookkeeping in Xero, MYOB and Reckon",
+      "Supported client compliance and liaised with the ATO on administrative matters",
+      "Assisted with tax queries across CGT, superannuation and small business matters",
+      "Automated routine processes with Excel VBA and macros",
+    ],
+    skills: ["BAS", "Bookkeeping", "Xero", "MYOB", "Excel VBA"],
+  },
+  {
+    id: "woolworths",
+    org: "Woolworths",
+    title: "Department Manager / 2IC (various roles)",
+    start: "2016",
+    end: "2025",
+    period: "Sep 2016 – Mar 2025",
+    type: "Full-time · Woolworths Supermarkets & Metro",
+    summary:
+      "Nearly nine years from the shop floor to running departments: leading replenishment, managing inventory, rostering teams and acting as duty manager.",
+    bullets: [
+      "Roles held: Night Replenishment Manager / 2IC, Grocery (Inventory) Manager / 2IC, Fruit & Veg Manager, Duty Manager / Supervisor",
+      "Led replenishment operations and ran the store as duty manager",
+      "Supervised and motivated teams, managed inventory and coordinated rostering",
+      "Monitored KPIs and analysed sales data to drive growth; trained staff and gave performance feedback",
+    ],
+    skills: ["Team leadership", "Inventory management", "Rostering", "KPI analysis"],
   },
 ];
 
@@ -70,6 +111,7 @@ export interface CAModule {
   status: "passed" | "in progress" | "upcoming";
 }
 
+// REVIEW: confirm module statuses
 export const caModules: CAModule[] = [
   { name: "Ethics & Business", status: "passed" },
   { name: "Risk & Technology (incl. AI)", status: "passed" },
@@ -80,23 +122,29 @@ export const caModules: CAModule[] = [
   { name: "Integrated Chartered Accounting Practice", status: "upcoming" },
 ];
 
-export const degree = {
-  title: "Bachelor of Commerce (Accounting)",
-  institution: "University, Brisbane",
-  detail: "Majored in accounting; picked up the coding habit on the side.",
+export const caProgram = {
+  title: "Graduate Diploma of Chartered Accounting",
+  institution: "Chartered Accountants Australia and New Zealand",
+  period: "Jan 2026 – present",
 };
 
+export const degrees = [
+  { title: "Bachelor of Business (Accounting)", institution: "Queensland University of Technology", period: "Feb 2023 – Nov 2025" },
+  { title: "Bachelor of Information Technology (Computer Science)", institution: "Queensland University of Technology", period: "Feb 2023 – Nov 2025" },
+];
+
 export const skillGroups: { domain: string; skills: string[] }[] = [
-  { domain: "Accounting", skills: ["Business services advisory", "Australian tax", "Audit", "XPA", "Financial modelling"] },
-  { domain: "Systems", skills: ["Systems analysis", "Workflow design", "Process improvement", "AI automation"] },
-  { domain: "Development", skills: ["TypeScript", "Next.js / React", "Postgres", "Docker", "Rust (exploring)"] },
-  { domain: "Infrastructure", skills: ["Docker Swarm", "Tailscale", "Cloudflare (DNS, tunnels)", "Homelab ops"] },
-  { domain: "Products", skills: ["Stripe integrations", "Basiq bank feeds", "Financial data pipelines"] },
+  { domain: "Accounting", skills: ["Financial reporting", "Tax compliance & preparation", "Account reconciliation", "Bookkeeping", "Financial analysis"] },
+  { domain: "Accounting software", skills: ["XPA", "Xero", "MYOB", "Reckon", "Cashbooks"] },
+  { domain: "Systems & AI", skills: ["Systems analysis", "Workflow design", "Process automation (Excel VBA, scripting)", "AI-assisted workflows (OpenAI, Claude)"] },
+  { domain: "Data & modelling", skills: ["Advanced Excel", "Financial modelling", "Dashboarding (Excel / Google Sheets)", "SQL"] },
+  { domain: "Development", skills: ["Python", "JavaScript / TypeScript", "C#", "Next.js / React", "Postgres", "MongoDB", "Docker"] },
+  { domain: "Working style", skills: ["Workflow coordination", "Communication", "Critical thinking", "Problem solving", "Team leadership"] },
 ];
 
 export const toolkit = [
-  "XPA", "Excel", "AI tooling", "TypeScript", "Next.js / React", "Postgres", "Docker",
-  "Docker Swarm", "Tailscale", "Cloudflare", "Supabase", "Basiq", "Stripe",
+  "XPA", "Xero", "MYOB", "Excel", "Claude", "OpenAI", "Python", "TypeScript", "Next.js / React",
+  "SQL", "Postgres", "Docker", "Tailscale", "Cloudflare", "Supabase", "Basiq",
 ];
 
 export const steps = [

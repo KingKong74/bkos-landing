@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useSiteContent } from "@/lib/siteContent";
 import {
   ABOUT, EMPLOYER, HEADLINE, INTRO, LOCATION,
-  caModules, contacts, degree, practices, roles, skillGroups, steps, toolkit,
+  caModules, caProgram, contacts, degrees, practices, roles, skillGroups, steps, toolkit,
 } from "@/lib/career";
 import type { Weather } from "@/lib/weather";
 import { AdminLoginModal } from "./AdminLoginModal";
@@ -248,15 +248,16 @@ export function ResumeLanding({ weather, hasResumePdf, hasHeroImage, hasAvatar }
             <section data-reveal className="rl-exp">
               <div>
                 <div className="eyebrow">Experience</div>
-                <h2 className="h2">Five years at {EMPLOYER}.</h2>
+                <h2 className="h2">From the shop floor to the ledger to the systems behind it.</h2>
                 <button type="button" className="btn btn-ghost" style={{ marginTop: 20 }} onClick={() => go("resume")}>Full resume →</button>
               </div>
               <div>
                 {roles.map((r) => (
                   <div key={r.id} data-reveal className="rl-exp-row">
-                    <div className="mono mute" style={{ fontSize: 13, paddingTop: 3 }}>{r.start} – {r.end}</div>
+                    <div className="mono mute" style={{ fontSize: 13, paddingTop: 3 }}>{r.period}</div>
                     <div>
                       <div style={{ fontSize: 18, fontWeight: 600 }}>{r.title}</div>
+                      <div className="mono" style={{ fontSize: 13, color: "var(--pri)", marginTop: 2 }}>{r.org}</div>
                       <p className="mute" style={{ margin: "6px 0 0", fontSize: 14.5, textWrap: "pretty" }}>{r.summary}</p>
                     </div>
                   </div>
@@ -344,7 +345,7 @@ export function ResumeLanding({ weather, hasResumePdf, hasHeroImage, hasAvatar }
             <div className="card" style={{ padding: "24px 28px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
                 <div className="eyebrow" style={{ fontSize: 12 }}>Experience</div>
-                <div className="mute" style={{ fontSize: 14 }}>{EMPLOYER} · Brisbane City</div>
+                <div className="mute" style={{ fontSize: 14 }}>Brisbane, QLD</div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 {roles.map((r) => {
@@ -359,7 +360,8 @@ export function ResumeLanding({ weather, hasResumePdf, hasHeroImage, hasAvatar }
                         <button type="button" className="rl-toggle" aria-expanded={o} onClick={() => setOpen((s) => ({ ...s, [r.id]: !o }))}>
                           <div>
                             <div style={{ fontWeight: 600, fontSize: 16 }}>{r.title}</div>
-                            <div className="mute" style={{ fontSize: 13.5 }}>{r.type} · {r.dur}</div>
+                            <div className="mute" style={{ fontSize: 13.5 }}>{r.org} · {r.type}</div>
+                            <div className="mono mute" style={{ fontSize: 12, marginTop: 2 }}>{r.period}</div>
                           </div>
                           <span className="rl-sign">{o ? "−" : "+"}</span>
                         </button>
@@ -387,8 +389,9 @@ export function ResumeLanding({ weather, hasResumePdf, hasHeroImage, hasAvatar }
               <div className="eyebrow" style={{ fontSize: 12, marginBottom: 14 }}>Education</div>
               <div className="rl-edu">
                 <div>
-                  <div style={{ fontWeight: 600 }}>CA Program</div>
-                  <div className="mute" style={{ fontSize: 14 }}>Chartered Accountants Australia and New Zealand</div>
+                  <div style={{ fontWeight: 600 }}>{caProgram.title}</div>
+                  <div className="mute" style={{ fontSize: 14 }}>{caProgram.institution}</div>
+                  <div className="mono mute" style={{ fontSize: 12, marginTop: 2 }}>{caProgram.period}</div>
                   <div style={{ display: "flex", flexDirection: "column", marginTop: 10 }}>
                     {caModules.map((m) => (
                       <div key={m.name} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "6px 0", borderTop: "1px solid var(--line)", fontSize: 14 }}>
@@ -401,10 +404,14 @@ export function ResumeLanding({ weather, hasResumePdf, hasHeroImage, hasAvatar }
                     ))}
                   </div>
                 </div>
-                <div>
-                  <div style={{ fontWeight: 600 }}>{degree.title}</div>
-                  <div className="mute" style={{ fontSize: 14 }}>{degree.institution}</div>
-                  <div style={{ fontSize: 14, marginTop: 8 }}>{degree.detail}</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  {degrees.map((d) => (
+                    <div key={d.title}>
+                      <div style={{ fontWeight: 600 }}>{d.title}</div>
+                      <div className="mute" style={{ fontSize: 14 }}>{d.institution}</div>
+                      <div className="mono mute" style={{ fontSize: 12, marginTop: 2 }}>{d.period}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
