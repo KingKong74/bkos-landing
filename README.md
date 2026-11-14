@@ -13,21 +13,24 @@ src/
 │   ├── admin/page.tsx           ← hidden dashboard (password-protected)
 │   └── api/
 │       ├── spotify/route.ts     ← current/recent track
-│       └── admin/{login,logout}/route.ts
+│       └── admin/{login,logout,content}/route.ts
 ├── components/
 │   ├── ResumeLanding.tsx        ← the whole public page (tabs via URL hash)
 │   ├── AdminShell.tsx / AdminEditor.tsx / AdminLoginModal.tsx
 ├── lib/
-│   ├── career.ts                ← roles, education, skills, contacts (edit + push)
-│   ├── siteContent.ts           ← availability + projects (admin-editable defaults)
+│   ├── content.ts               ← content types + defaults
+│   ├── contentStore.ts          ← reads/writes saved admin content (JSON on the volume)
 │   ├── theme.ts, weather.ts, spotify.ts, auth.ts, build.ts
 └── middleware.ts                ← protects /admin
 ```
 
 ## Editing content
 
-- **Career details** (roles, education, skills, about): `src/lib/career.ts`, then `git push`.
-- **Projects + availability**: defaults in `src/lib/siteContent.ts`. The admin editor overrides them in *your browser only*; export the JSON and paste it into `DEFAULT_CONTENT` to publish.
+Everything on the page (profile, experience, CA modules, degrees, skills, projects, contacts, the home-page cards) is editable at **/admin**. Hit **Save** and it's live for everyone immediately.
+
+- Saved content is stored as JSON at `$CONTENT_DIR/content.json` (`/app/data` in the container, a Docker volume `bkoslanding-content` mounted by Dokploy, so it survives redeploys).
+- Defaults live in `src/lib/content.ts`; they're used until something is saved and after **Reset to defaults**.
+- Use **Download JSON** in the admin panel as a backup.
 - **Files in `public/`** (all optional, the page adapts when missing):
   - `resume.pdf` → shows the Resume PDF / Download buttons
   - `avatar.jpg` → headshot on the Resume tab (else "BK")

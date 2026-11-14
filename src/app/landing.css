@@ -144,3 +144,10 @@
 .rl .ad-check { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--mute); margin-right: 4px; }
 .rl-icon { width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
 .rl-icon:hover { border-color: var(--ink); }
+.rl .ad-item > summary { display: flex; align-items: center; gap: 10px; cursor: pointer; list-style: none; }
+.rl .ad-item > summary::-webkit-details-marker { display: none; }
+.rl .ad-item > summary::before { content: "▸"; color: var(--mute); transition: transform .15s ease; }
+.rl .ad-item[open] > summary::before { transform: rotate(90deg); }
+.rl select.ad-input { appearance: auto; }
+.rl .btn:disabled { opacity: .45; cursor: not-allowed; }
+.rl .ad-savebar { position: sticky; bottom: 16px; z-index: 10; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 16px; border-radius: 16px; background: var(--glass); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line); box-shadow: 0 8px 30px rgba(8,15,27,.12); }

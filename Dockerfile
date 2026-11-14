@@ -26,6 +26,10 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Admin-edited content lives here (Dokploy mounts a volume at /app/data)
+RUN mkdir -p /app/data && chown nextjs:nodejs /app/data
+ENV CONTENT_DIR=/app/data
+
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000

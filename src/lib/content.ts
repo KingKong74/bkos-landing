@@ -1,7 +1,8 @@
-// ─── Career data ─────────────────────────────────────────────────────────────
+// ─── Site content: types + defaults ──────────────────────────────────────────
 //
-// Rendered verbatim on the home page and the Resume tab. Edit here, git push.
-// Projects live in siteContent.ts (editable from the admin panel).
+// Everything on the public page. The admin panel saves edits to the server
+// (see contentStore.ts); these values are the defaults used until something
+// has been saved, and after "Reset to defaults".
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const EMPLOYER = "HMW Group";
@@ -99,13 +100,15 @@ export const caModules: CAModule[] = [
   { name: "Data Analytics and Insights", status: "in progress" },
 ];
 
-export const caProgram = {
+export const caProgram: Degree = {
   title: "Graduate Diploma of Chartered Accounting",
   institution: "Chartered Accountants Australia and New Zealand",
   period: "Jan 2026 – expected 2028",
 };
 
-export const degrees = [
+export interface Degree { title: string; institution: string; period: string }
+
+export const degrees: Degree[] = [
   { title: "Bachelor of Business (Accounting)", institution: "Queensland University of Technology", period: "Feb 2023 – Nov 2025" },
   { title: "Bachelor of Information Technology (Computer Science)", institution: "Queensland University of Technology", period: "Feb 2023 – Nov 2025" },
 ];
@@ -119,21 +122,25 @@ export const skillGroups: { domain: string; skills: string[] }[] = [
   { domain: "Working style", skills: ["Workflow coordination", "Communication", "Critical thinking", "Problem solving"] },
 ];
 
-export const toolkit = [
+export const toolkit: string[] = [
   "XPA", "Xero", "MYOB", "Excel", "Claude", "OpenAI", "Python", "TypeScript", "Next.js / React",
   "SQL", "Postgres", "Docker", "Tailscale", "Cloudflare", "Supabase", "Basiq",
 ];
 
-export const steps = [
+export interface Step { n: string; title: string; body: string }
+
+export const steps: Step[] = [
   { n: "01", title: "Analyse", body: "Map the current system and workflow end to end, and find where time and accuracy are lost." },
   { n: "02", title: "Redesign", body: "Simplify the process, remove duplicated effort, and define what good looks like." },
   { n: "03", title: "Automate", body: "Use AI and scripting to take repetitive work off the team, with checks that hold up." },
 ];
 
-export const practices = [
+export interface Practice { n: string; tone: "pri" | "acc"; label: string; title: string; short: string; body: string; tags: string[] }
+
+export const practices: Practice[] = [
   {
     n: "01",
-    tone: "pri" as const,
+    tone: "pri",
     label: "Practice",
     title: "Business Services Advisory",
     short: "Compliance and advisory work for property development clients at HMW Group.",
@@ -142,7 +149,7 @@ export const practices = [
   },
   {
     n: "02",
-    tone: "acc" as const,
+    tone: "acc",
     label: "Build",
     title: "Systems & Automation",
     short: "Workflow analysis, AI-driven automation, and the software to support it.",
@@ -151,8 +158,111 @@ export const practices = [
   },
 ];
 
-export const contacts = [
+export interface Contact { label: string; text: string; href: string }
+
+export const contacts: Contact[] = [
   { label: "LinkedIn", text: "linkedin.com/in/bailey-king-25b22a235", href: "https://www.linkedin.com/in/bailey-king-25b22a235/" },
   { label: "GitHub", text: "github.com/KingKong74", href: "https://github.com/KingKong74" },
   { label: "Email", text: "bailey.king37@gmail.com", href: "mailto:bailey.king37@gmail.com" },
 ];
+
+export interface Project {
+  id: string;
+  name: string;
+  tagline: string;
+  tech: string[];
+  status: string;
+  link?: string;
+  learned?: string; // shown on the Projects tab
+  visible: boolean;
+}
+
+export const projects: Project[] = [
+  {
+    id: "bk-os",
+    name: "BK-OS",
+    tagline: "A self-hosted personal OS in the browser — auth, files, notes, apps.",
+    tech: ["Next.js 16", "Postgres", "Docker Swarm"],
+    status: "in development",
+    link: "https://os.bkos.dev",
+    learned:
+      "Running my own auth and storage taught me more about sessions, cookies and failure modes than any tutorial. Also: backups are a feature, not a chore.",
+    visible: true,
+  },
+  {
+    id: "moniqr",
+    name: "moniqr",
+    tagline: "Accounting for Australian sole traders. Bank feeds, journals, BAS.",
+    tech: ["React", "Supabase", "Basiq"],
+    status: "in development",
+    link: "https://moniqr.com",
+    learned:
+      "Bank feed data is messy in ways textbooks don't cover. Building double-entry from scratch made me a sharper accountant, not just a better dev.",
+    visible: true,
+  },
+  {
+    id: "stack",
+    name: "Stack",
+    tagline: "A self-hosted command centre for my side projects: resume cards, activity feeds, bug tracking and roadmaps.",
+    tech: ["React", "Express", "Postgres", "Claude Code hooks"],
+    status: "in development",
+    link: "https://projects.bkos.dev",
+    learned:
+      "Context-switching is the real cost of side projects. Building a tool that remembers where I left off made every other project faster.",
+    visible: true,
+  },
+];
+
+export interface SiteContent {
+  availability: string;
+  headline: string;
+  intro: string;
+  about: string;
+  employer: string;
+  location: string;
+  practices: Practice[];
+  steps: Step[];
+  roles: Role[];
+  caProgram: Degree;
+  caModules: CAModule[];
+  degrees: Degree[];
+  skillGroups: { domain: string; skills: string[] }[];
+  toolkit: string[];
+  projects: Project[];
+  contacts: Contact[];
+}
+
+export const DEFAULT_CONTENT: SiteContent = {
+  availability: "open to opportunities",
+  headline: HEADLINE,
+  intro: INTRO,
+  about: ABOUT,
+  employer: EMPLOYER,
+  location: LOCATION,
+  practices,
+  steps,
+  roles,
+  caProgram,
+  caModules,
+  degrees,
+  skillGroups,
+  toolkit,
+  projects,
+  contacts,
+};
+
+/** Overlay saved content on the defaults, keeping only known keys of the right shape. */
+export function mergeContent(stored: unknown): SiteContent {
+  const out: SiteContent = { ...DEFAULT_CONTENT };
+  if (!stored || typeof stored !== "object") return out;
+  const src = stored as Record<string, unknown>;
+  for (const key of Object.keys(DEFAULT_CONTENT) as (keyof SiteContent)[]) {
+    const def = DEFAULT_CONTENT[key];
+    const val = src[key];
+    if (val === undefined || val === null) continue;
+    if (Array.isArray(def) ? Array.isArray(val) : typeof val === typeof def && !Array.isArray(val)) {
+      (out as unknown as Record<string, unknown>)[key] = val;
+    }
+  }
+  return out;
+}

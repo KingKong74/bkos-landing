@@ -5,6 +5,7 @@ import { AdminShell } from "@/components/AdminShell";
 import { AdminEditor } from "@/components/AdminEditor";
 import { getBuildTime, formatTimeAgo } from "@/lib/build";
 import { fetchBrisbaneWeather } from "@/lib/weather";
+import { getContent, hasSavedContent } from "@/lib/contentStore";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Admin — bkos.dev", robots: { index: false } };
@@ -81,7 +82,7 @@ export default async function AdminPage() {
 
         <section>
           <div className="eyebrow" style={{ marginBottom: 12 }}>Content</div>
-          <AdminEditor />
+          <AdminEditor initial={getContent()} hasSaved={hasSavedContent()} />
         </section>
 
         <section>

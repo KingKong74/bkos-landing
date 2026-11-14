@@ -2,12 +2,8 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useSiteContent } from "@/lib/siteContent";
 import { useTheme } from "@/lib/theme";
-import {
-  ABOUT, EMPLOYER, HEADLINE, INTRO, LOCATION,
-  caModules, caProgram, contacts, degrees, practices, roles, skillGroups, steps, toolkit,
-} from "@/lib/career";
+import type { SiteContent } from "@/lib/content";
 import type { Weather } from "@/lib/weather";
 import { AdminLoginModal } from "./AdminLoginModal";
 import { ThemeToggle } from "./ThemeToggle";
@@ -21,6 +17,7 @@ const ADMIN_WINDOW_MS = 2000;
 interface Track { title: string; artist: string; albumImage?: string; url: string; isPlaying: boolean }
 
 interface Props {
+  content: SiteContent;
   weather: Weather;
   hasResumePdf: boolean;
   hasHeroImage: boolean;
@@ -42,8 +39,11 @@ function host(url?: string) {
   try { return new URL(url).host.replace(/^www\./, ""); } catch { return url; }
 }
 
-export function ResumeLanding({ weather, hasResumePdf, hasHeroImage, hasAvatar }: Props) {
-  const content = useSiteContent();
+export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, hasAvatar }: Props) {
+  const {
+    about: ABOUT, employer: EMPLOYER, headline: HEADLINE, intro: INTRO, location: LOCATION,
+    caModules, caProgram, contacts, degrees, practices, roles, skillGroups, steps, toolkit,
+  } = content;
   const projects = content.projects.filter((p) => p.visible);
   const availability = cap(content.availability || "open to opportunities");
 
