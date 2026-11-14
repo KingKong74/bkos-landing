@@ -1,12 +1,6 @@
-import type { Metadata } from "next";
-import { WorkPage } from "@/components/WorkPage";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Work — Bailey King",
-  description:
-    "Experience, CA ANZ progress, notable engagements and skills. Forensic-track accountant and software developer in Brisbane.",
-};
-
+// The old /work page now lives in the Resume tab on the home page.
 export default function Work() {
-  return <WorkPage />;
+  redirect("/#resume");
 }

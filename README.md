@@ -53,7 +53,7 @@ Drop `avatar.jpg` (square, ideally 400x400) into `public/`. Falls back to "BK" i
 
 ## Hidden admin panel
 
-**Trigger**: click the profile pic 5 times within 2 seconds. A login modal appears.
+**Trigger**: click the very top-right corner of the page (invisible 22px hot-zone) 5 times within 2 seconds. A login modal appears.
 
 **Auth**: password compared against `ADMIN_PASSWORD` env var. On success, a 30-day signed cookie is set, you're redirected to `/admin`.
 

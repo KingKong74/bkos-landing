@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
+// Rendered inside the .rl theme wrapper, so it picks up the landing tokens.
 export function AdminLoginModal({ onClose }: { onClose: () => void }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -29,99 +30,77 @@ export function AdminLoginModal({ onClose }: { onClose: () => void }) {
       });
       if (res.ok) {
         window.location.href = "/admin";
-      } else {
-        const data = await res.json().catch(() => ({}));
-        setError(data?.error || "Invalid password");
-        setPassword("");
-        setLoading(false);
+        return;
       }
+      const data = await res.json().catch(() => ({}));
+      setError(data?.error || "Invalid password");
+      setPassword("");
     } catch {
       setError("Network error");
-      setLoading(false);
     }
+    setLoading(false);
   }
+
+  const disabled = loading || !password;
 
   return (
     <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(0,0,0,0.7)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 1000,
-        backdropFilter: "blur(4px)",
-      }}
       onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, background: "rgba(8,15,27,.55)", display: "flex",
+        alignItems: "center", justifyContent: "center", zIndex: 50, padding: 16,
+      }}
     >
-      <div
-        style={{
-          background: "#1a1916",
-          border: "1px solid #3a3935",
-          borderRadius: 12,
-          padding: 24,
-          width: "calc(100% - 32px)",
-          maxWidth: 360,
-        }}
+      <form
+        role="dialog"
+        aria-modal="true"
+        aria-label="Admin sign in"
         onClick={(e) => e.stopPropagation()}
+        onSubmit={handleSubmit}
+        style={{
+          width: 340, maxWidth: "100%", background: "var(--surf)", color: "var(--ink)",
+          border: "1px solid var(--line)", borderRadius: 16, padding: 24,
+        }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-          <h2 style={{ fontSize: 16, fontWeight: 500, margin: 0 }}>Authenticate</h2>
+        <div style={{ fontWeight: 600, fontSize: 18 }}>Admin</div>
+        <div style={{ fontSize: 14, color: "var(--mute)", marginTop: 4 }}>Enter the admin password.</div>
+        <input
+          ref={inputRef}
+          type="password"
+          inputMode="numeric"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          autoComplete="current-password"
+          style={{
+            width: "100%", marginTop: 16, padding: "10px 12px", border: "1px solid var(--line)",
+            borderRadius: 8, background: "var(--bg)", color: "var(--ink)", font: "15px var(--sans)", outline: "none",
+          }}
+        />
+        {error && <div style={{ color: "var(--acc)", fontSize: 13, marginTop: 8 }}>{error}</div>}
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16 }}>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close"
-            style={{ background: "transparent", border: "none", color: "#a8a59c", cursor: "pointer", fontSize: 18 }}
-          >
-            ×
-          </button>
-        </div>
-        <form onSubmit={handleSubmit}>
-          <input
-            ref={inputRef}
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Admin password"
-            autoComplete="current-password"
             style={{
-              width: "100%",
-              background: "#0f0e0c",
-              border: "1px solid #3a3935",
-              borderRadius: 8,
-              padding: "10px 12px",
-              color: "#f4f4f1",
-              fontSize: 14,
-              fontFamily: "inherit",
-              outline: "none",
+              padding: "8px 14px", border: "1px solid var(--line)", borderRadius: 999, background: "transparent",
+              color: "var(--ink)", font: "500 14px var(--sans)", cursor: "pointer",
             }}
-          />
-          {error && (
-            <div style={{ color: "#e24b4a", fontSize: 12, marginTop: 8 }}>{error}</div>
-          )}
+          >
+            Cancel
+          </button>
           <button
             type="submit"
-            disabled={loading || !password}
+            disabled={disabled}
             style={{
-              width: "100%",
-              marginTop: 12,
-              padding: "10px 12px",
-              background: "#f5a623",
-              color: "#0f0e0c",
-              border: "none",
-              borderRadius: 8,
-              fontSize: 14,
-              fontWeight: 500,
-              cursor: loading || !password ? "not-allowed" : "pointer",
-              opacity: loading || !password ? 0.5 : 1,
-              fontFamily: "inherit",
+              padding: "8px 16px", border: 0, borderRadius: 999, background: "var(--pri)", color: "var(--onpri)",
+              font: "600 14px var(--sans)", cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.5 : 1,
             }}
           >
-            {loading ? "Authenticating…" : "Sign in"}
+            {loading ? "Signing in…" : "Sign in"}
           </button>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   );
 }
