@@ -90,24 +90,19 @@ export const roles: Role[] = [
 
 export interface CAModule {
   name: string;
-  status: "passed" | "in progress" | "upcoming";
+  status: "complete" | "in progress" | "upcoming";
 }
 
-// REVIEW: confirm module statuses
 export const caModules: CAModule[] = [
-  { name: "Ethics & Business", status: "passed" },
-  { name: "Risk & Technology (incl. AI)", status: "passed" },
-  { name: "Australian Taxation", status: "in progress" },
-  { name: "Financial Accounting & Reporting", status: "upcoming" },
-  { name: "Business Performance", status: "upcoming" },
-  { name: "Audit & Risk", status: "upcoming" },
-  { name: "Integrated Chartered Accounting Practice", status: "upcoming" },
+  { name: "Australian Taxation", status: "complete" },
+  { name: "Financial Modelling", status: "complete" },
+  { name: "Data Analytics and Insights", status: "in progress" },
 ];
 
 export const caProgram = {
   title: "Graduate Diploma of Chartered Accounting",
   institution: "Chartered Accountants Australia and New Zealand",
-  period: "Jan 2026 – present",
+  period: "Jan 2026 – expected 2028",
 };
 
 export const degrees = [

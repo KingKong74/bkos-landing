@@ -391,7 +391,7 @@ export function ResumeLanding({ weather, hasResumePdf, hasHeroImage, hasAvatar }
                         <span>{m.name}</span>
                         <span className="mono" style={{
                           fontSize: 12, whiteSpace: "nowrap",
-                          color: m.status === "passed" ? "var(--pri)" : m.status === "in progress" ? "var(--acc)" : "var(--mute)",
+                          color: m.status === "complete" ? "var(--pri)" : m.status === "in progress" ? "var(--acc)" : "var(--mute)",
                         }}>{m.status}</span>
                       </div>
                     ))}
