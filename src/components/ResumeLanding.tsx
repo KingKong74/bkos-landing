@@ -10,6 +10,7 @@ import {
 } from "@/lib/career";
 import type { Weather } from "@/lib/weather";
 import { AdminLoginModal } from "./AdminLoginModal";
+import { ThemeToggle } from "./ThemeToggle";
 
 type Page = "home" | "resume" | "projects" | "contact";
 
@@ -158,7 +159,7 @@ export function ResumeLanding({ weather, hasResumePdf, hasHeroImage, hasAvatar }
             ))}
           </nav>
           <div className="rl-right">
-            <button type="button" className="rl-pill" onClick={toggleTheme}>{theme === "light" ? "Dark" : "Light"}</button>
+            <ThemeToggle theme={theme} onToggle={toggleTheme} />
             {resumeBtn("Resume PDF", "rl-pill strong btn")}
           </div>
         </div>

@@ -142,3 +142,5 @@
 .rl .ad-btn:disabled { opacity: .4; cursor: not-allowed; }
 .rl .ad-btn.danger { color: var(--acc); }
 .rl .ad-check { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--mute); margin-right: 4px; }
+.rl-icon { width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+.rl-icon:hover { border-color: var(--ink); }

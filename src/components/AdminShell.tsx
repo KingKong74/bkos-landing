@@ -1,6 +1,7 @@
 "use client";
 
 import { useTheme } from "@/lib/theme";
+import { ThemeToggle } from "./ThemeToggle";
 
 /** Themed frame for /admin: same tokens, header and light/dark toggle as the public site. */
 export function AdminShell({ children }: { children: React.ReactNode }) {
@@ -16,7 +17,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <span className="mono mute" style={{ fontSize: 13 }}>/ admin</span>
           </a>
           <div className="rl-right">
-            <button type="button" className="rl-pill" onClick={toggleTheme}>{theme === "light" ? "Dark" : "Light"}</button>
+            <ThemeToggle theme={theme} onToggle={toggleTheme} />
             <form action="/api/admin/logout" method="POST" style={{ margin: 0 }}>
               <button type="submit" className="rl-pill strong">Sign out</button>
             </form>
