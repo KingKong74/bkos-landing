@@ -10,7 +10,7 @@ import { ThemeToggle } from "./ThemeToggle";
 
 type Page = "home" | "resume" | "projects" | "contact";
 
-const TABS: [Page, string][] = [["home", "Home"], ["resume", "Resume"], ["projects", "Projects"], ["contact", "Contact"]];
+const TABS: Page[] = ["home", "resume", "projects", "contact"];
 const ADMIN_CLICKS = 5;
 const ADMIN_WINDOW_MS = 2000;
 
@@ -19,15 +19,13 @@ interface Track { title: string; artist: string; albumImage?: string; url: strin
 interface Props {
   content: SiteContent;
   weather: Weather;
-  hasResumePdf: boolean;
-  hasHeroImage: boolean;
-  hasAvatar: boolean;
+  media: { resume: string | null; avatar: string | null; hero: string | null };
 }
 
 function pageFromHash(): Page {
   if (typeof window === "undefined") return "home";
   const h = window.location.hash.replace("#", "");
-  return (TABS.some(([id]) => id === h) ? h : "home") as Page;
+  return (TABS.includes(h as Page) ? h : "home") as Page;
 }
 
 function cap(s: string) {
@@ -39,11 +37,14 @@ function host(url?: string) {
   try { return new URL(url).host.replace(/^www\./, ""); } catch { return url; }
 }
 
-export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, hasAvatar }: Props) {
+export function ResumeLanding({ content, weather, media }: Props) {
   const {
-    about: ABOUT, employer: EMPLOYER, headline: HEADLINE, intro: INTRO, location: LOCATION,
+    about: ABOUT, headline: HEADLINE, intro: INTRO, location: LOCATION,
     caModules, caProgram, contacts, degrees, practices, roles, skillGroups, steps, toolkit,
   } = content;
+  const c = content.copy;
+  const sec = content.sections;
+  const tabLabel: Record<Page, string> = { home: c.tabHome, resume: c.tabResume, projects: c.tabProjects, contact: c.tabContact };
   const projects = content.projects.filter((p) => p.visible);
   const availability = cap(content.availability || "open to opportunities");
 
@@ -126,11 +127,11 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
   const condText = weather.description ? cap(weather.description) : "Live from Open-Meteo";
 
   const resumeBtn = (label: string, cls: string) =>
-    hasResumePdf ? (
-      <a href="/resume.pdf" download="Bailey-King-Resume.pdf" className={cls}>{label}</a>
+    media.resume ? (
+      <a href={media.resume} target="_blank" rel="noreferrer" className={cls}>{label}</a>
     ) : null;
 
-  const nowPlaying = track && (
+  const nowPlaying = sec.nowPlaying && track && (
     <a href={track.url} target="_blank" rel="noreferrer" className="rl-live-pill card-link" style={{ textDecoration: "none" }}>
       <div className="rl-art" style={{ width: 36, height: 36, borderRadius: "50%" }}>
         {track.albumImage && <img src={track.albumImage} alt="" />}
@@ -148,19 +149,19 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
       <header className="rl-head">
         <div className="rl-head-in">
           <button type="button" className="rl-brand" onClick={() => go("home")}>
-            <span className="rl-logo">BK</span>
-            <span style={{ fontWeight: 600, fontSize: 16 }}>bkos.dev</span>
+            <span className="rl-logo">{c.initials}</span>
+            <span style={{ fontWeight: 600, fontSize: 16 }}>{c.brand}</span>
           </button>
           <nav className="rl-tabs" aria-label="Primary">
-            {TABS.map(([id, label]) => (
+            {TABS.map((id) => (
               <button key={id} type="button" className="rl-tab" aria-current={page === id ? "page" : undefined} onClick={() => go(id)}>
-                {label}
+                {tabLabel[id]}
               </button>
             ))}
           </nav>
           <div className="rl-right">
             <ThemeToggle theme={theme} onToggle={toggleTheme} />
-            {resumeBtn("Resume PDF", "rl-pill strong btn")}
+            {resumeBtn(c.resumePdfLabel, "rl-pill strong btn")}
           </div>
         </div>
       </header>
@@ -170,18 +171,18 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
           <section className="rl-hero">
             <div className="rl-hero-in">
               <div className="mono mute" style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
-                <span className="dot" />{availability} · Brisbane City {tempText}
+                <span className="dot" />{availability} · {c.city}{sec.weather ? ` ${tempText}` : ""}
               </div>
-              <h1>Bailey King</h1>
+              <h1>{c.name}</h1>
               <p className="rl-hero-sub">{INTRO}</p>
               <div style={{ display: "flex", gap: 10, marginTop: 30, flexWrap: "wrap", justifyContent: "center" }}>
-                <button type="button" className="btn btn-acc btn-lg" onClick={() => go("resume")}>View resume</button>
-                <button type="button" className="btn btn-surf btn-lg" onClick={() => go("projects")}>See projects</button>
+                <button type="button" className="btn btn-acc btn-lg" onClick={() => go("resume")}>{c.heroPrimary}</button>
+                <button type="button" className="btn btn-surf btn-lg" onClick={() => go("projects")}>{c.heroSecondary}</button>
               </div>
 
               <div className="rl-visual">
                 <div className="rl-visual-frame">
-                  {hasHeroImage ? <img src="/hero.jpg" alt="" /> : <HeroArt />}
+                  {media.hero ? <img src={media.hero} alt="" /> : <HeroArt />}
                 </div>
                 <div className="rl-visual-floats">
                   {practices.map((p, i) => (
@@ -196,10 +197,10 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
 
               <div className="rl-live">
                 {nowPlaying}
-                <div className="rl-live-pill" style={{ padding: "10px 18px" }}>
+                <div className="rl-live-pill" style={{ padding: "10px 18px" }} hidden={!sec.weather}>
                   <div style={{ fontSize: 22, fontWeight: 600 }}>{tempText}</div>
                   <div>
-                    <div className="mono" style={{ fontSize: 11, color: "var(--pri)" }}>brisbane</div>
+                    <div className="mono" style={{ fontSize: 11, color: "var(--pri)" }}>{c.city.toLowerCase()}</div>
                     <div style={{ fontSize: 14, fontWeight: 500 }}>{condText}</div>
                   </div>
                 </div>
@@ -208,9 +209,9 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
           </section>
 
           <div className="rl-main">
-            <section data-reveal>
-              <div className="eyebrow">What I do</div>
-              <h2 className="h2" style={{ maxWidth: 720 }}>Two disciplines, one practice: the accounting and the systems that run it.</h2>
+            <section data-reveal hidden={!sec.whatIDo}>
+              <div className="eyebrow">{c.whatEyebrow}</div>
+              <h2 className="h2" style={{ maxWidth: 720 }}>{c.whatHeading}</h2>
               <div className="rl-grid-auto" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))", marginTop: 36 }}>
                 {practices.map((p) => (
                   <div key={p.title} data-reveal className="card" style={{ borderRadius: 24, padding: 32 }}>
@@ -225,8 +226,8 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
               </div>
             </section>
 
-            <section data-reveal>
-              <div className="eyebrow">How I work</div>
+            <section data-reveal hidden={!sec.howIWork}>
+              <div className="eyebrow">{c.howEyebrow}</div>
               <div className="rl-steps">
                 {steps.map((s) => (
                   <div key={s.n} data-reveal style={{ padding: "28px 28px 8px 0" }}>
@@ -238,11 +239,11 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
               </div>
             </section>
 
-            <section data-reveal className="rl-exp">
+            <section data-reveal className="rl-exp" hidden={!sec.experience}>
               <div>
-                <div className="eyebrow">Experience</div>
-                <h2 className="h2">The accounting, and the systems behind it.</h2>
-                <button type="button" className="btn btn-ghost" style={{ marginTop: 20 }} onClick={() => go("resume")}>Full resume →</button>
+                <div className="eyebrow">{c.expEyebrow}</div>
+                <h2 className="h2">{c.expHeading}</h2>
+                <button type="button" className="btn btn-ghost" style={{ marginTop: 20 }} onClick={() => go("resume")}>{c.expButton}</button>
               </div>
               <div>
                 {roles.map((r) => (
@@ -258,13 +259,13 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
               </div>
             </section>
 
-            <section data-reveal>
+            <section data-reveal hidden={!sec.projects}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 16, flexWrap: "wrap" }}>
                 <div>
-                  <div className="eyebrow">Selected projects</div>
-                  <h2 className="h2">Built and self-hosted.</h2>
+                  <div className="eyebrow">{c.projEyebrow}</div>
+                  <h2 className="h2">{c.projHeading}</h2>
                 </div>
-                <button type="button" className="btn btn-ghost" onClick={() => go("projects")}>All projects →</button>
+                <button type="button" className="btn btn-ghost" onClick={() => go("projects")}>{c.projButton}</button>
               </div>
               <div className="rl-grid-auto" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))", marginTop: 32 }}>
                 {projects.map((p) => (
@@ -282,8 +283,8 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
               </div>
             </section>
 
-            <section data-reveal>
-              <div className="eyebrow">Toolkit</div>
+            <section data-reveal hidden={!sec.toolkit}>
+              <div className="eyebrow">{c.toolkitEyebrow}</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 20 }}>
                 {toolkit.map((k) => (
                   <span key={k} style={{ fontSize: 15, padding: "8px 16px", borderRadius: 999, border: "1px solid var(--line)", background: "var(--surf)" }}>{k}</span>
@@ -291,17 +292,17 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
               </div>
             </section>
 
-            <section data-reveal className="rl-cta">
-              <h2 style={{ margin: 0, fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 600, letterSpacing: "-0.02em" }}>Let&apos;s work together.</h2>
+            <section data-reveal className="rl-cta" hidden={!sec.cta}>
+              <h2 style={{ margin: 0, fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 600, letterSpacing: "-0.02em" }}>{c.ctaHeading}</h2>
               <p style={{ margin: "12px auto 0", maxWidth: 520, fontSize: 17, opacity: 0.8 }}>
-                Recruiting, a systems or automation question, or comparing homelab notes — all welcome.
+                {c.ctaBody}
               </p>
               <div style={{ display: "flex", gap: 10, justifyContent: "center", marginTop: 28, flexWrap: "wrap" }}>
-                <a href="mailto:bailey.king37@gmail.com" className="btn btn-acc btn-lg">Email me</a>
-                {hasResumePdf ? (
-                  <a href="/resume.pdf" download="Bailey-King-Resume.pdf" className="btn btn-lg" style={{ border: "1px solid var(--bg)", color: "var(--bg)" }}>Download resume</a>
+                <a href={`mailto:${c.ctaEmail}`} className="btn btn-acc btn-lg">{c.ctaEmailLabel}</a>
+                {media.resume ? (
+                  <a href={media.resume} target="_blank" rel="noreferrer" className="btn btn-lg" style={{ border: "1px solid var(--bg)", color: "var(--bg)" }}>{c.downloadLabel}</a>
                 ) : (
-                  <button type="button" className="btn btn-lg" style={{ background: "transparent", border: "1px solid var(--bg)", color: "var(--bg)" }} onClick={() => go("resume")}>View resume</button>
+                  <button type="button" className="btn btn-lg" style={{ background: "transparent", border: "1px solid var(--bg)", color: "var(--bg)" }} onClick={() => go("resume")}>{c.heroPrimary}</button>
                 )}
               </div>
             </section>
@@ -314,31 +315,29 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div className="card rl-id">
               <div className="rl-avatar">
-                {hasAvatar ? <img src="/avatar.jpg" alt="Bailey King" /> : "BK"}
+                {media.avatar ? <img src={media.avatar} alt={c.name} /> : c.initials}
               </div>
               <div>
                 <div className="mono mute" style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5 }}>
                   <span className="dot" />{availability}
                 </div>
-                <h1 style={{ margin: "6px 0 0", fontSize: 34, fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.02em" }}>Bailey King</h1>
+                <h1 style={{ margin: "6px 0 0", fontSize: 34, fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.02em" }}>{c.name}</h1>
                 <p className="mute" style={{ margin: "6px 0 0", fontSize: 16, textWrap: "pretty" }}>{HEADLINE}</p>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 14 }}>
-                  <span className="chip">{EMPLOYER}</span>
-                  <span className="chip">{LOCATION}</span>
-                  <span className="chip">CA Program, in progress</span>
+                  {content.resumeChips.map((chip) => <span key={chip} className="chip">{chip}</span>)}
                 </div>
               </div>
             </div>
 
             <div className="card" style={{ padding: "24px 28px" }}>
-              <div className="eyebrow" style={{ fontSize: 12, marginBottom: 8 }}>About</div>
+              <div className="eyebrow" style={{ fontSize: 12, marginBottom: 8 }}>{c.labelAbout}</div>
               <p style={{ margin: 0, fontSize: 16, textWrap: "pretty" }}>{ABOUT}</p>
             </div>
 
             <div className="card" style={{ padding: "24px 28px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
-                <div className="eyebrow" style={{ fontSize: 12 }}>Experience</div>
-                <div className="mute" style={{ fontSize: 14 }}>Brisbane, QLD</div>
+                <div className="eyebrow" style={{ fontSize: 12 }}>{c.labelExperience}</div>
+                <div className="mute" style={{ fontSize: 14 }}>{LOCATION}</div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 {roles.map((r) => {
@@ -379,7 +378,7 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
             </div>
 
             <div className="card" style={{ padding: "24px 28px" }}>
-              <div className="eyebrow" style={{ fontSize: 12, marginBottom: 14 }}>Education</div>
+              <div className="eyebrow" style={{ fontSize: 12, marginBottom: 14 }}>{c.labelEducation}</div>
               <div className="rl-edu">
                 <div>
                   <div style={{ fontWeight: 600 }}>{caProgram.title}</div>
@@ -410,7 +409,7 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
             </div>
 
             <div className="card" style={{ padding: "24px 28px" }}>
-              <div className="eyebrow" style={{ fontSize: 12, marginBottom: 14 }}>Skills</div>
+              <div className="eyebrow" style={{ fontSize: 12, marginBottom: 14 }}>{c.labelSkills}</div>
               <div className="rl-grid-auto" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))" }}>
                 {skillGroups.map((g) => (
                   <div key={g.domain}>
@@ -426,7 +425,7 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
 
           <aside className="rl-side">
             <div className="card" style={{ padding: 20 }}>
-              <div className="eyebrow" style={{ fontSize: 12, marginBottom: 12 }}>Contact</div>
+              <div className="eyebrow" style={{ fontSize: 12, marginBottom: 12 }}>{c.labelContact}</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 {contacts.map((c) => (
                   <a key={c.label} href={c.href} target={c.href.startsWith("http") ? "_blank" : undefined} rel="noreferrer" style={{ display: "block" }}>
@@ -435,11 +434,11 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
                   </a>
                 ))}
               </div>
-              {hasResumePdf && (
-                <a href="/resume.pdf" download="Bailey-King-Resume.pdf" className="btn btn-acc" style={{ display: "block", marginTop: 16, textAlign: "center", padding: 10, fontSize: 14 }}>Download resume</a>
+              {media.resume && (
+                <a href={media.resume} target="_blank" rel="noreferrer" className="btn btn-acc" style={{ display: "block", marginTop: 16, textAlign: "center", padding: 10, fontSize: 14 }}>{c.downloadLabel}</a>
               )}
             </div>
-            {track && (
+            {sec.nowPlaying && track && (
               <a href={track.url} target="_blank" rel="noreferrer" className="card card-link" style={{ padding: 20, display: "flex", gap: 12, alignItems: "center" }}>
                 <div className="rl-art" style={{ width: 52, height: 52, borderRadius: 12 }}>
                   {track.albumImage && <img src={track.albumImage} alt="" />}
@@ -451,8 +450,8 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
                 </div>
               </a>
             )}
-            <div className="card" style={{ padding: 20 }}>
-              <div className="mono" style={{ fontSize: 11, color: "var(--pri)" }}>brisbane right now</div>
+            <div className="card" style={{ padding: 20 }} hidden={!sec.weather}>
+              <div className="mono" style={{ fontSize: 11, color: "var(--pri)" }}>{c.city.toLowerCase()} right now</div>
               <div style={{ fontSize: 32, fontWeight: 600, lineHeight: 1.2, marginTop: 4 }}>{tempText}</div>
               <div className="mute" style={{ fontSize: 14 }}>{condText}</div>
             </div>
@@ -462,8 +461,8 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
 
       {page === "projects" && (
         <div style={{ maxWidth: 1160, margin: "0 auto", padding: "48px 24px" }}>
-          <h2 style={{ margin: 0, fontSize: 40, fontWeight: 600, letterSpacing: "-0.02em" }}>Projects</h2>
-          <p className="mute" style={{ margin: "8px 0 0", fontSize: 16 }}>Software built and run on my own infrastructure.</p>
+          <h2 style={{ margin: 0, fontSize: 40, fontWeight: 600, letterSpacing: "-0.02em" }}>{c.projectsTitle}</h2>
+          <p className="mute" style={{ margin: "8px 0 0", fontSize: 16 }}>{c.projectsSubtitle}</p>
           <div className="rl-grid-auto" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", marginTop: 32 }}>
             {projects.map((p) => (
               <div key={p.id} className="card" style={{ overflow: "hidden", display: "flex", flexDirection: "column" }}>
@@ -490,9 +489,9 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
 
       {page === "contact" && (
         <div style={{ maxWidth: 720, margin: "0 auto", padding: "72px 24px", textAlign: "center" }}>
-          <h2 style={{ margin: 0, fontSize: 40, fontWeight: 600, letterSpacing: "-0.02em" }}>Get in touch</h2>
+          <h2 style={{ margin: 0, fontSize: 40, fontWeight: 600, letterSpacing: "-0.02em" }}>{c.contactTitle}</h2>
           <p className="mute" style={{ margin: "10px 0 0", fontSize: 17 }}>
-            Recruiting, a systems or automation question, or comparing homelab notes — all welcome.
+            {c.contactSubtitle}
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 32, textAlign: "left" }}>
             {contacts.map((c) => (
@@ -510,7 +509,7 @@ export function ResumeLanding({ content, weather, hasResumePdf, hasHeroImage, ha
       )}
 
       <p className="mono mute" style={{ margin: 0, padding: 24, textAlign: "center", fontSize: 12 }}>
-        © 2026 — running on a mini PC under my desk · self-hosted with love
+        {c.footer}
       </p>
 
       {admin && <AdminLoginModal onClose={() => setAdmin(false)} />}

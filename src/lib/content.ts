@@ -213,7 +213,66 @@ export const projects: Project[] = [
   },
 ];
 
+/** Every piece of fixed page copy, editable from admin. */
+export const DEFAULT_COPY = {
+  name: "Bailey King",
+  initials: "BK",
+  brand: "bkos.dev",
+  city: "Brisbane City",
+  tabHome: "Home",
+  tabResume: "Resume",
+  tabProjects: "Projects",
+  tabContact: "Contact",
+  heroPrimary: "View resume",
+  heroSecondary: "See projects",
+  whatEyebrow: "What I do",
+  whatHeading: "Two disciplines, one practice: the accounting and the systems that run it.",
+  howEyebrow: "How I work",
+  expEyebrow: "Experience",
+  expHeading: "The accounting, and the systems behind it.",
+  expButton: "Full resume →",
+  projEyebrow: "Selected projects",
+  projHeading: "Built and self-hosted.",
+  projButton: "All projects →",
+  toolkitEyebrow: "Toolkit",
+  ctaHeading: "Let's work together.",
+  ctaBody: "Recruiting, a systems or automation question, or comparing homelab notes — all welcome.",
+  ctaEmailLabel: "Email me",
+  ctaEmail: "bailey.king37@gmail.com",
+  resumePdfLabel: "Resume PDF",
+  downloadLabel: "Download resume",
+  labelAbout: "About",
+  labelExperience: "Experience",
+  labelEducation: "Education",
+  labelSkills: "Skills",
+  labelContact: "Contact",
+  projectsTitle: "Projects",
+  projectsSubtitle: "Software built and run on my own infrastructure.",
+  contactTitle: "Get in touch",
+  contactSubtitle: "Recruiting, a systems or automation question, or comparing homelab notes — all welcome.",
+  footer: "© 2026 — running on a mini PC under my desk · self-hosted with love",
+  metaTitle: "Bailey King — accountant & systems analyst",
+  metaDescription:
+    "Accountant in Business Services Advisory and Systems Analyst at HMW Group, Brisbane. CA ANZ candidate. I redesign workflows and use AI to automate repetitive work.",
+};
+export type Copy = typeof DEFAULT_COPY;
+
+export const DEFAULT_SECTIONS = {
+  whatIDo: true,
+  howIWork: true,
+  experience: true,
+  projects: true,
+  toolkit: true,
+  cta: true,
+  nowPlaying: true,
+  weather: true,
+};
+export type Sections = typeof DEFAULT_SECTIONS;
+
 export interface SiteContent {
+  copy: Copy;
+  sections: Sections;
+  resumeChips: string[];
   availability: string;
   headline: string;
   intro: string;
@@ -233,6 +292,9 @@ export interface SiteContent {
 }
 
 export const DEFAULT_CONTENT: SiteContent = {
+  copy: DEFAULT_COPY,
+  sections: DEFAULT_SECTIONS,
+  resumeChips: [EMPLOYER, LOCATION, "CA Program, in progress"],
   availability: "open to opportunities",
   headline: HEADLINE,
   intro: INTRO,
@@ -260,9 +322,10 @@ export function mergeContent(stored: unknown): SiteContent {
     const def = DEFAULT_CONTENT[key];
     const val = src[key];
     if (val === undefined || val === null) continue;
-    if (Array.isArray(def) ? Array.isArray(val) : typeof val === typeof def && !Array.isArray(val)) {
-      (out as unknown as Record<string, unknown>)[key] = val;
-    }
+    if (Array.isArray(def) ? !Array.isArray(val) : typeof val !== typeof def || Array.isArray(val)) continue;
+    // Plain objects (copy, sections, caProgram) merge key-by-key so new defaults still appear
+    const merged = typeof def === "object" && !Array.isArray(def) ? { ...def, ...(val as object) } : val;
+    (out as unknown as Record<string, unknown>)[key] = merged;
   }
   return out;
 }

@@ -13,28 +13,27 @@ src/
 │   ├── admin/page.tsx           ← hidden dashboard (password-protected)
 │   └── api/
 │       ├── spotify/route.ts     ← current/recent track
-│       └── admin/{login,logout,content}/route.ts
+│       └── admin/{login,logout,content,files}/route.ts
+│   └── files/[slot]/route.ts    ← serves uploaded files
 ├── components/
 │   ├── ResumeLanding.tsx        ← the whole public page (tabs via URL hash)
 │   ├── AdminShell.tsx / AdminEditor.tsx / AdminLoginModal.tsx
 ├── lib/
 │   ├── content.ts               ← content types + defaults
 │   ├── contentStore.ts          ← reads/writes saved admin content (JSON on the volume)
+│   ├── media.ts                 ← uploaded files (resume / headshot / hero)
 │   ├── theme.ts, weather.ts, spotify.ts, auth.ts, build.ts
 └── middleware.ts                ← protects /admin
 ```
 
 ## Editing content
 
-Everything on the page (profile, experience, CA modules, degrees, skills, projects, contacts, the home-page cards) is editable at **/admin**. Hit **Save** and it's live for everyone immediately.
+Everything is editable at **/admin**: all page text (headings, buttons, labels, footer, Google title/description), profile, experience, CA modules, degrees, skills, projects, contacts, the home-page cards, show/hide switches for each home section, and the resume PDF / headshot / hero image uploads. Hit **Save** and it's live for everyone immediately (uploads apply instantly).
 
-- Saved content is stored as JSON at `$CONTENT_DIR/content.json` (`/app/data` in the container, a Docker volume `bkoslanding-content` mounted by Dokploy, so it survives redeploys).
-- Defaults live in `src/lib/content.ts`; they're used until something is saved and after **Reset to defaults**.
-- Use **Download JSON** in the admin panel as a backup.
-- **Files in `public/`** (all optional, the page adapts when missing):
-  - `resume.pdf` → shows the Resume PDF / Download buttons
-  - `avatar.jpg` → headshot on the Resume tab (else "BK")
-  - `hero.jpg` → hero image (else a drawn illustration)
+- Saved content: `$CONTENT_DIR/content.json`; uploads: `$CONTENT_DIR/uploads/`. In the container that's `/app/data`, a Docker volume (`bkoslanding-content`) mounted by Dokploy, so it survives redeploys.
+- Defaults live in `src/lib/content.ts`, used until something is saved and after **Reset to defaults**.
+- Uploaded files are served from `/files/<resume|avatar|hero>`. A file committed as `public/resume.pdf`, `public/avatar.jpg` or `public/hero.jpg` is used as a fallback when nothing is uploaded.
+- **Download JSON** in the admin panel backs up the text content (not the uploads).
 
 ## Hidden admin panel
 

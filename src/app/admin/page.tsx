@@ -1,18 +1,14 @@
-import fs from "node:fs";
-import path from "node:path";
 import type { Metadata } from "next";
 import { AdminShell } from "@/components/AdminShell";
 import { AdminEditor } from "@/components/AdminEditor";
+import { AdminFiles } from "@/components/AdminFiles";
+import { mediaStatus } from "@/lib/media";
 import { getBuildTime, formatTimeAgo } from "@/lib/build";
 import { fetchBrisbaneWeather } from "@/lib/weather";
 import { getContent, hasSavedContent } from "@/lib/contentStore";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Admin — bkos.dev", robots: { index: false } };
-
-function publicFile(name: string) {
-  return fs.existsSync(path.join(process.cwd(), "public", name));
-}
 
 export default async function AdminPage() {
   const buildTime = getBuildTime();
@@ -26,12 +22,6 @@ export default async function AdminPage() {
     { label: "Weather", value: weather.temp == null ? "Unavailable" : `${weather.temp}°C`, sub: weather.temp == null ? "Open-Meteo fetch failed" : `Brisbane · ${weather.description}`, ok: weather.temp != null },
     { label: "Analytics", value: cfAnalytics ? "On" : "Off", sub: cfAnalytics ? "Cloudflare Web Analytics" : "set NEXT_PUBLIC_CF_ANALYTICS_TOKEN", ok: cfAnalytics },
   ];
-
-  const assets = [
-    { file: "resume.pdf", use: "Resume PDF / Download resume buttons" },
-    { file: "avatar.jpg", use: "Headshot on the Resume tab (else “BK”)" },
-    { file: "hero.jpg", use: "Hero image (else the drawn illustration)" },
-  ].map((a) => ({ ...a, present: publicFile(a.file) }));
 
   const links = [
     { href: "/", label: "Public site" },
@@ -63,21 +53,8 @@ export default async function AdminPage() {
         </section>
 
         <section>
-          <div className="eyebrow" style={{ marginBottom: 12 }}>Files in /public</div>
-          <div className="card" style={{ padding: "6px 20px" }}>
-            {assets.map((a, i) => (
-              <div key={a.file} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "12px 0", borderTop: i ? "1px solid var(--line)" : undefined }}>
-                <div>
-                  <div className="mono" style={{ fontSize: 14 }}>{a.file}</div>
-                  <div className="mute" style={{ fontSize: 13 }}>{a.use}</div>
-                </div>
-                <span className="mono" style={{ fontSize: 12, padding: "3px 10px", borderRadius: 999, background: "var(--soft)", color: a.present ? "var(--pri)" : "var(--mute)", whiteSpace: "nowrap" }}>
-                  {a.present ? "present" : "missing"}
-                </span>
-              </div>
-            ))}
-          </div>
-          <div className="mute" style={{ fontSize: 13, marginTop: 8 }}>Add a file to <code className="mono">public/</code> and git push; the site picks it up on the next deploy.</div>
+          <div className="eyebrow" style={{ marginBottom: 12 }}>Files</div>
+          <AdminFiles initial={mediaStatus()} />
         </section>
 
         <section>

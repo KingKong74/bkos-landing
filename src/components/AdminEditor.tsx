@@ -4,7 +4,41 @@
 // (/api/admin/content) and the public site shows it on the next page load.
 
 import { useEffect, useRef, useState } from "react";
-import { DEFAULT_CONTENT, type SiteContent, type CAModule } from "@/lib/content";
+import { DEFAULT_CONTENT, type SiteContent, type CAModule, type Copy, type Sections } from "@/lib/content";
+
+const COPY_GROUPS: { title: string; fields: [keyof Copy, string, boolean?][] }[] = [
+  { title: "Name, header & tabs", fields: [
+    ["name", "Your name"], ["initials", "Initials (logo + headshot fallback)"], ["brand", "Site name in header"], ["city", "City (hero line + weather)"],
+    ["tabHome", "Tab: Home"], ["tabResume", "Tab: Resume"], ["tabProjects", "Tab: Projects"], ["tabContact", "Tab: Contact"],
+    ["resumePdfLabel", "Header resume button"],
+  ] },
+  { title: "Hero buttons", fields: [["heroPrimary", "Primary button"], ["heroSecondary", "Secondary button"]] },
+  { title: "Home page sections", fields: [
+    ["whatEyebrow", "What I do: label"], ["whatHeading", "What I do: heading", true],
+    ["howEyebrow", "How I work: label"],
+    ["expEyebrow", "Experience: label"], ["expHeading", "Experience: heading", true], ["expButton", "Experience: button"],
+    ["projEyebrow", "Projects: label"], ["projHeading", "Projects: heading"], ["projButton", "Projects: button"],
+    ["toolkitEyebrow", "Toolkit: label"],
+  ] },
+  { title: "Call to action (bottom of home)", fields: [
+    ["ctaHeading", "Heading"], ["ctaBody", "Text", true], ["ctaEmailLabel", "Email button"], ["ctaEmail", "Email address"], ["downloadLabel", "Download resume button"],
+  ] },
+  { title: "Resume tab labels", fields: [
+    ["labelAbout", "About"], ["labelExperience", "Experience"], ["labelEducation", "Education"], ["labelSkills", "Skills"], ["labelContact", "Contact"],
+  ] },
+  { title: "Projects & Contact tabs", fields: [
+    ["projectsTitle", "Projects: title"], ["projectsSubtitle", "Projects: subtitle", true],
+    ["contactTitle", "Contact: title"], ["contactSubtitle", "Contact: subtitle", true],
+  ] },
+  { title: "Footer & search engines", fields: [
+    ["footer", "Footer text", true], ["metaTitle", "Browser tab / Google title", true], ["metaDescription", "Google / link-preview description", true],
+  ] },
+];
+
+const SECTION_LABELS: [keyof Sections, string][] = [
+  ["whatIDo", "What I do"], ["howIWork", "How I work"], ["experience", "Experience"], ["projects", "Selected projects"],
+  ["toolkit", "Toolkit"], ["cta", "Call to action"], ["nowPlaying", "Spotify now playing"], ["weather", "Weather"],
+];
 
 // ─── Small field helpers ─────────────────────────────────────────────────────
 
@@ -176,6 +210,33 @@ export function AdminEditor({ initial, hasSaved }: { initial: SiteContent; hasSa
           <Text label="Headline (Resume tab, under your name)" value={draft.headline} onChange={(v) => set({ headline: v })} wide />
           <Text label="Intro (home page, under your name)" value={draft.intro} onChange={(v) => set({ intro: v })} multiline />
           <Text label="About (Resume tab)" value={draft.about} onChange={(v) => set({ about: v })} multiline />
+          <Csv label="Chips under your name (Resume tab)" value={draft.resumeChips} onChange={(v) => set({ resumeChips: v })} wide />
+        </div>
+      </Section>
+
+      <Section title="Show / hide" hint="Turn parts of the home page on or off.">
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 18px" }}>
+          {SECTION_LABELS.map(([key, label]) => (
+            <label key={key} className="ad-check">
+              <input type="checkbox" checked={draft.sections[key]} onChange={(e) => set({ sections: { ...draft.sections, [key]: e.target.checked } })} /> {label}
+            </label>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Page text" hint="Every heading, label and button on the site.">
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {COPY_GROUPS.map((g) => (
+            <details key={g.title} className="ad-item">
+              <summary><span style={{ fontWeight: 600 }}>{g.title}</span></summary>
+              <div className="ad-grid" style={{ marginTop: 14 }}>
+                {g.fields.map(([key, label, multi]) => (
+                  <Text key={key} label={label} value={draft.copy[key]} multiline={multi}
+                    onChange={(v) => set({ copy: { ...draft.copy, [key]: v } })} />
+                ))}
+              </div>
+            </details>
+          ))}
         </div>
       </Section>
 
