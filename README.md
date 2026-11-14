@@ -1,63 +1,43 @@
-# bkos.dev — Bailey's personal launchpad
+# bkos.dev — Bailey King
 
-A Next.js 16 personal site: bento landing page, photo gallery, trip stories, live Spotify "now playing", and a hidden admin panel. Designed to live at the apex of `bkos.dev` alongside `os.bkos.dev` (bailey.os).
+Resume-style personal site: Home, Resume, Projects and Contact tabs in one page, light/dark themes, live Brisbane weather and Spotify "now playing", plus a hidden admin panel. Next.js 16, self-hosted via Dokploy at `bkos.dev`.
 
 ## What's here
 
 ```
 src/
 ├── app/
-│   ├── page.tsx                  ← bento landing
-│   ├── photos/page.tsx           ← masonry gallery + lightbox
-│   ├── trips/page.tsx            ← trip index
-│   ├── trips/[slug]/page.tsx     ← individual trip
-│   ├── admin/page.tsx            ← hidden dashboard (password-protected)
+│   ├── page.tsx                 ← landing (server: weather + which /public files exist)
+│   ├── landing.css              ← design tokens (light/dark) + all page styles
+│   ├── work/page.tsx            ← redirects /work → /#resume
+│   ├── admin/page.tsx           ← hidden dashboard (password-protected)
 │   └── api/
-│       ├── spotify/route.ts      ← polls Spotify, returns current/recent track
-│       ├── weather/route.ts      ← Brisbane temp via Open-Meteo
+│       ├── spotify/route.ts     ← current/recent track
 │       └── admin/{login,logout}/route.ts
-├── components/                    ← Header, Avatar, AdminGate, SpotifyTile, Tiles, ...
-├── lib/                           ← spotify, auth (HMAC), trips, photos, build time
-└── middleware.ts                  ← protects /admin
-content/                            ← (empty — content is in src/lib for now)
-scripts/spotify-auth.mjs           ← one-time OAuth helper to get refresh token
-public/                             ← drop avatar.jpg, photos, trip images here
+├── components/
+│   ├── ResumeLanding.tsx        ← the whole public page (tabs via URL hash)
+│   ├── AdminShell.tsx / AdminEditor.tsx / AdminLoginModal.tsx
+├── lib/
+│   ├── career.ts                ← roles, education, skills, contacts (edit + push)
+│   ├── siteContent.ts           ← availability + projects (admin-editable defaults)
+│   ├── theme.ts, weather.ts, spotify.ts, auth.ts, build.ts
+└── middleware.ts                ← protects /admin
 ```
 
----
+## Editing content
 
-## How content works
-
-There's no CMS. You edit files and `git push`. Dokploy redeploys automatically.
-
-### To add a photo
-1. Drop the image into `public/photos/`
-2. Add an entry to `src/lib/photos.ts`:
-   ```ts
-   { src: "/photos/my-photo.jpg", alt: "what it is", width: 800, height: 600, date: "2026-06-18" }
-   ```
-3. `git push` → live
-
-### To add a trip
-1. Create `public/trips/<slug>/` and drop the photos in
-2. Add a `Trip` entry to `src/lib/trips.ts` with title, dates, location, story, photo paths
-3. `git push` → live at `/trips/<slug>`
-
-### To update the "Now" tile
-Edit `NOW_TEXT` in `src/components/Tiles.tsx`, push.
-
-### To add a profile pic
-Drop `avatar.jpg` (square, ideally 400x400) into `public/`. Falls back to "BK" initials if missing.
-
----
+- **Career details** (roles, education, skills, about): `src/lib/career.ts`, then `git push`.
+- **Projects + availability**: defaults in `src/lib/siteContent.ts`. The admin editor overrides them in *your browser only*; export the JSON and paste it into `DEFAULT_CONTENT` to publish.
+- **Files in `public/`** (all optional, the page adapts when missing):
+  - `resume.pdf` → shows the Resume PDF / Download buttons
+  - `avatar.jpg` → headshot on the Resume tab (else "BK")
+  - `hero.jpg` → hero image (else a drawn illustration)
 
 ## Hidden admin panel
 
 **Trigger**: click within 64px of the top-right corner of the window 5 times within 2 seconds. A login modal appears.
 
-**Auth**: password compared against `ADMIN_PASSWORD` env var. On success, a 30-day signed cookie is set, you're redirected to `/admin`.
-
-The admin dashboard currently shows status only (Spotify connection, photo/trip counts, last deploy time, links to Cloudflare Web Analytics dashboard). It's read-only by design — actual content edits go through git.
+**Auth**: password compared against the `ADMIN_PASSWORD` env var (set in Dokploy). On success a 30-day signed cookie is set and you land on `/admin`: status (deploy, Spotify, weather, analytics), which `public/` files exist, and the content editor.
 
 ---
 
@@ -103,7 +83,7 @@ Generate `ADMIN_SECRET` on the server:
 openssl rand -hex 32
 ```
 
-**For the Spotify tile (optional but recommended):**
+**For the Spotify now-playing card (optional but recommended):**
 
 ```
 SPOTIFY_CLIENT_ID=<from Spotify dashboard>
@@ -149,13 +129,13 @@ Cloudflare auto-creates the DNS A/AAAA record for the apex.
 
 ### 7. Test
 
-Visit `https://bkos.dev` in your browser. Bento landing should load. Try the 5-click admin trick on the profile pic.
+Visit `https://bkos.dev` in your browser. The resume landing should load. Try the admin trick: 5 clicks in the top-right corner.
 
 ---
 
 ## Spotify setup (one-time)
 
-The "Now playing" tile requires a permanent refresh token, obtained via a one-time OAuth flow.
+The "Now playing" card requires a permanent refresh token, obtained via a one-time OAuth flow.
 
 ### 1. Create a Spotify Developer app
 
@@ -191,7 +171,7 @@ SPOTIFY_REFRESH_TOKEN=...
 
 Add them to the bkos-landing Dokploy service env vars. Redeploy.
 
-The Spotify tile will start showing tracks within 30 seconds of you next playing music.
+The Spotify now-playing card will start showing tracks within 30 seconds of you next playing music.
 
 ---
 
@@ -211,28 +191,15 @@ The Spotify tile will start showing tracks within 30 seconds of you next playing
 - **Build fails on `npm install`** — confirm `.npmrc` is present in the repo with `legacy-peer-deps=true`
 - **502 from Cloudflare** — bkos-landing service isn't running, or the domain isn't routing correctly in Dokploy
 - **Admin page redirects to home immediately** — `ADMIN_SECRET` or `ADMIN_PASSWORD` env vars missing
-- **Spotify tile shows "Connect refresh token"** — env vars not set or refresh token expired (re-run the auth script)
+- **Spotify now-playing card shows "Connect refresh token"** — env vars not set or refresh token expired (re-run the auth script)
 - **Profile pic doesn't show** — make sure `avatar.jpg` (literally that filename, lowercase) is in `public/`
-
----
-
-## What's intentionally not here yet
-
-Things we deferred to keep the first version shippable:
-- **Real-time admin editing** — for now you `git push` to change content
-- **Photo uploads via admin UI** — same
-- **R2 / external photo storage** — photos live in the repo for now
-- **CF Analytics API integration** — admin shows a placeholder + link to the CF dashboard
-
-All easy to add later. The structure makes it straightforward.
 
 ---
 
 ## Tech choices, briefly
 
 - **Next.js 16** App Router with `output: 'standalone'` for Docker
-- **No UI library** — custom components, all dark with amber accent
-- **HMAC + Web Crypto** for admin auth (edge-runtime compatible, no jose/jsonwebtoken)
-- **react-markdown** for trip stories (only third-party UI dep)
-- **Open-Meteo** for weather (no API key, free)
-- **Cloudflare Web Analytics** for traffic (privacy-respecting, free, GDPR-friendly)
+- **No UI or CSS framework**: one stylesheet of design tokens (`landing.css`), IBM Plex type
+- **HMAC + Web Crypto** for admin auth (edge-runtime compatible)
+- **Open-Meteo** for weather (no API key)
+- **Cloudflare Web Analytics** for traffic (optional)

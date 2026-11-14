@@ -3,6 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSiteContent } from "@/lib/siteContent";
+import { useTheme } from "@/lib/theme";
 import {
   ABOUT, EMPLOYER, HEADLINE, INTRO, LOCATION,
   caModules, caProgram, contacts, degrees, practices, roles, skillGroups, steps, toolkit,
@@ -11,10 +12,8 @@ import type { Weather } from "@/lib/weather";
 import { AdminLoginModal } from "./AdminLoginModal";
 
 type Page = "home" | "resume" | "projects" | "contact";
-type Theme = "light" | "dark";
 
 const TABS: [Page, string][] = [["home", "Home"], ["resume", "Resume"], ["projects", "Projects"], ["contact", "Contact"]];
-const THEME_KEY = "bkos-theme";
 const ADMIN_CLICKS = 5;
 const ADMIN_WINDOW_MS = 2000;
 
@@ -48,7 +47,7 @@ export function ResumeLanding({ weather, hasResumePdf, hasHeroImage, hasAvatar }
   const availability = cap(content.availability || "open to opportunities");
 
   const [page, setPage] = useState<Page>("home");
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, toggleTheme] = useTheme();
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [track, setTrack] = useState<Track | null>(null);
   const [admin, setAdmin] = useState(false);
@@ -61,23 +60,11 @@ export function ResumeLanding({ weather, hasResumePdf, hasHeroImage, hasAvatar }
     const onHash = () => { setPage(pageFromHash()); window.scrollTo(0, 0); };
     window.addEventListener("hashchange", onHash);
     window.addEventListener("popstate", onHash);
-    try {
-      const saved = window.localStorage.getItem(THEME_KEY);
-      if (saved === "light" || saved === "dark") setTheme(saved);
-    } catch { /* storage unavailable */ }
     return () => {
       window.removeEventListener("hashchange", onHash);
       window.removeEventListener("popstate", onHash);
     };
   }, []);
-
-  // Keep the page chrome (overscroll, scrollbar) in step with the theme
-  useEffect(() => {
-    const bg = theme === "dark" ? "#080F1B" : "#EDF3F6";
-    document.documentElement.style.background = bg;
-    document.body.style.background = bg;
-    document.documentElement.style.colorScheme = theme;
-  }, [theme]);
 
   // Spotify now playing
   useEffect(() => {
@@ -112,12 +99,6 @@ export function ResumeLanding({ weather, hasResumePdf, hasHeroImage, hasAvatar }
     setPage(p);
     window.scrollTo(0, 0);
   }, []);
-
-  function toggleTheme() {
-    const next = theme === "light" ? "dark" : "light";
-    setTheme(next);
-    try { window.localStorage.setItem(THEME_KEY, next); } catch { /* ignore */ }
-  }
 
   // Hidden admin trigger: 5 clicks within 2s in the top-right corner of the window.
   // Listens on window so it works over the header and buttons alike.

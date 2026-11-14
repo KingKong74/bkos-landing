@@ -2,13 +2,8 @@
 
 // ─── Site content store ──────────────────────────────────────────────────────
 //
-// Single source of truth for everything editable via the hidden admin panel:
-// featured projects, availability status, reading list, posts, hero words,
-// testimonials, and section visibility.
-//
-// Storage: localStorage for now — edits are per-browser and won't survive a
-// different device. Defaults below render on the server and for every visitor;
-// localStorage overrides apply after hydration.
+// Single source of truth for what the hidden admin panel edits: the
+// availability line and the projects list.
 //
 // TODO(postgres): move this to Postgres via BK-OS — either fs_nodes (one JSON
 // document at /sites/bkos-landing/content.json) or a dedicated site_content
@@ -25,57 +20,19 @@ export interface Project {
   tech: string[];
   status: string; // "in development" | "live" | "shipped" | "paused" | free text
   link?: string;
-  learned?: string; // "what I learned building this" — shown on hover
+  learned?: string; // "what I learned building this" — shown on the Projects tab
   visible: boolean;
 }
 
-export interface Post {
-  id: string;
-  title: string;
-  excerpt: string;
-  body?: string;
-  link?: string;
-  comingSoon?: boolean;
-}
-
-export interface ReadingItem {
-  id: string;
-  title: string;
-  author: string;
-  note?: string; // e.g. "for CA Risk & Tech" or "re-read"
-}
-
-export interface Testimonial {
-  id: string;
-  quote: string;
-  name: string;
-  role: string;
-}
-
-export interface SectionVisibility {
-  projects: boolean;
-  stack: boolean;
-  perspectives: boolean;
-  photos: boolean;
-  personal: boolean;
-  vibe: boolean;
-}
-
 export interface SiteContent {
-  version: 1;
+  version: 2;
   availability: string;
-  heroWords: string[];
   projects: Project[];
-  reading: ReadingItem[];
-  posts: Post[];
-  testimonials: Testimonial[];
-  sections: SectionVisibility;
 }
 
 export const DEFAULT_CONTENT: SiteContent = {
-  version: 1,
+  version: 2,
   availability: "open to opportunities",
-  heroWords: ["accountant", "developer", "builder", "investor", "tinkerer", "CA candidate"],
   projects: [
     {
       id: "bk-os",
@@ -105,59 +62,23 @@ export const DEFAULT_CONTENT: SiteContent = {
       tagline: "A self-hosted command centre for my side projects: resume cards, activity feeds, bug tracking and roadmaps.",
       tech: ["React", "Express", "Postgres", "Claude Code hooks"],
       status: "in development",
+      link: "https://projects.bkos.dev",
       learned:
         "Context-switching is the real cost of side projects. Building a tool that remembers where I left off made every other project faster.",
       visible: true,
     },
   ],
-  reading: [
-    { id: "r1", title: "Financial Shenanigans", author: "Howard Schilit", note: "forensic classics" },
-    { id: "r2", title: "Designing Data-Intensive Applications", author: "Martin Kleppmann" },
-    { id: "r3", title: "The Psychology of Money", author: "Morgan Housel", note: "re-read" },
-  ],
-  posts: [
-    {
-      id: "p1",
-      title: "On learning to code as an accountant",
-      excerpt:
-        "Why the debit-credit mental model maps surprisingly well onto software, and what I'd tell an accountant starting from zero.",
-      comingSoon: true,
-    },
-    {
-      id: "p2",
-      title: "Building your own tools",
-      excerpt:
-        "Self-hosting isn't about saving money on SaaS. It's about understanding what your tools actually do.",
-      comingSoon: true,
-    },
-    {
-      id: "p3",
-      title: "Forensic accounting meets software",
-      excerpt:
-        "Tracing transactions through a general ledger and tracing bugs through a codebase are the same skill.",
-      comingSoon: true,
-    },
-  ],
-  testimonials: [],
-  sections: {
-    projects: true,
-    stack: true,
-    perspectives: true,
-    photos: true,
-    personal: true,
-    vibe: true,
-  },
 };
 
-const STORAGE_KEY = "bkos-site-content-v1";
+// v2: content was slimmed to availability + projects; old v1 overrides are ignored.
+const STORAGE_KEY = "bkos-site-content-v2";
 
 /** Merge stored content over defaults so new fields added in code still appear. */
 function mergeContent(stored: Partial<SiteContent>): SiteContent {
   return {
-    ...DEFAULT_CONTENT,
-    ...stored,
-    version: 1,
-    sections: { ...DEFAULT_CONTENT.sections, ...(stored.sections ?? {}) },
+    version: 2,
+    availability: stored.availability ?? DEFAULT_CONTENT.availability,
+    projects: Array.isArray(stored.projects) ? stored.projects : DEFAULT_CONTENT.projects,
   };
 }
 
