@@ -14,7 +14,7 @@ export const INTRO =
   "Accountant in Business Services Advisory and Systems Analyst at HMW Group. I analyse existing systems and workflows, redesign them for efficiency, and use AI to automate repetitive work. CA ANZ candidate.";
 
 export const ABOUT =
-  "Accountant in Business Services Advisory and Systems Analyst at HMW Group in Brisbane City. I advise SME and family-group clients, and analyse the systems and workflows behind that work to make it more efficient, using AI and automation to remove repetitive manual tasks. I hold a double degree from QUT in Business (Accounting) and Information Technology (Computer Science), and I'm completing the CA ANZ Graduate Diploma of Chartered Accounting. Before HMW I worked in business advisory at Vincents and as an assistant accountant at Absolute Business Solutions, after almost nine years in Woolworths management, which taught me how to lead a team and run an operation. Outside practice, I build financial and infrastructure software, including an accounting platform for Australian sole traders and a self-hosted personal operating system.";
+  "Accountant in Business Services Advisory and Systems Analyst at HMW Group in Brisbane City. I advise clients, most of them in property development, and analyse the systems and workflows behind that work to make it more efficient, using AI and automation to remove repetitive manual tasks. I hold a double degree from QUT in Business (Accounting) and Information Technology (Computer Science), and I'm completing the CA ANZ Graduate Diploma of Chartered Accounting. Before HMW I worked in business advisory at Vincents and as an assistant accountant at Absolute Business Solutions, after almost nine years in Woolworths management, which taught me how to lead a team and run an operation. Outside practice, I build financial and infrastructure software, including an accounting platform for Australian sole traders and a self-hosted personal operating system.";
 
 export interface Role {
   id: string;
@@ -39,11 +39,11 @@ export const roles: Role[] = [
     period: "Oct 2026 – present",
     type: "Full-time · Brisbane City",
     summary:
-      "Dual role across business services advisory and internal systems. Advising SME and family-group clients while analysing the firm's systems and workflows, identifying inefficiencies, and building automated, AI-assisted processes to replace manual work.",
+      "Dual role across business services advisory and internal systems. Advising clients, most of them in property development, while analysing the firm's systems and workflows, identifying inefficiencies, and building automated, AI-assisted processes to replace manual work.",
     bullets: [
       "Analysing current systems and workflows to identify bottlenecks, duplicated effort and manual handling",
       "Designing and implementing AI-assisted automation for recurring accounting and administrative tasks",
-      "Compliance and advisory work across a portfolio of SME and family-group clients",
+      "Compliance and advisory work for a client base made up mostly of property development groups and their entities",
       "Day-to-day in XPA, Excel, AI tooling, and increasingly my own software",
     ],
     skills: ["Systems analysis", "Process improvement", "AI automation", "Australian tax", "XPA"],
@@ -159,8 +159,8 @@ export const practices = [
     tone: "pri" as const,
     label: "Practice",
     title: "Business Services Advisory",
-    short: "Compliance and advisory work for SME and family-group clients at HMW Group.",
-    body: "Compliance and advisory work for SME and family-group clients across companies, trusts, partnerships and SMSFs.",
+    short: "Compliance and advisory work for property development clients at HMW Group.",
+    body: "Compliance and advisory work for clients who are mostly in property development, across the companies, trusts and partnerships behind each project.",
     tags: ["Financial statements", "Income tax", "BAS", "Advisory"],
   },
   {

@@ -119,6 +119,18 @@ export function ResumeLanding({ weather, hasResumePdf, hasHeroImage, hasAvatar }
     try { window.localStorage.setItem(THEME_KEY, next); } catch { /* ignore */ }
   }
 
+  // Hidden admin trigger: 5 clicks within 2s in the top-right corner of the window.
+  // Listens on window so it works over the header and buttons alike.
+  useEffect(() => {
+    const ZONE = 64;
+    const onDown = (e: PointerEvent) => {
+      const right = document.documentElement.clientWidth;
+      if (e.clientX >= right - ZONE && e.clientY <= ZONE) onCorner();
+    };
+    window.addEventListener("pointerdown", onDown, true);
+    return () => window.removeEventListener("pointerdown", onDown, true);
+  }, []);
+
   function onCorner() {
     const now = Date.now();
     clicks.current = clicks.current.filter((t) => now - t < ADMIN_WINDOW_MS).concat(now);
@@ -150,7 +162,6 @@ export function ResumeLanding({ weather, hasResumePdf, hasHeroImage, hasAvatar }
 
   return (
     <div className="rl" data-th={theme} ref={rootRef}>
-      <button type="button" className="rl-corner" aria-hidden="true" tabIndex={-1} onClick={onCorner} />
 
       <header className="rl-head">
         <div className="rl-head-in">
@@ -275,8 +286,8 @@ export function ResumeLanding({ weather, hasResumePdf, hasHeroImage, hasAvatar }
               </div>
               <div className="rl-grid-auto" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))", marginTop: 32 }}>
                 {projects.map((p) => (
-                  <a key={p.id} data-reveal href={p.link} target="_blank" rel="noreferrer" className="rl-proj card-link">
-                    <div className="rl-shot" style={{ aspectRatio: "4 / 3" }}>{host(p.link)}</div>
+                  <a key={p.id} data-reveal href={p.link} target={p.link ? "_blank" : undefined} rel="noreferrer" className="rl-proj card-link" style={p.link ? undefined : { cursor: "default" }}>
+                    <div className="rl-shot" style={{ aspectRatio: "4 / 3" }}>{host(p.link) || "self-hosted"}</div>
                     <div style={{ padding: "18px 20px" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
                         <span style={{ fontWeight: 600, fontSize: 18 }}>{p.name}</span>
@@ -474,7 +485,7 @@ export function ResumeLanding({ weather, hasResumePdf, hasHeroImage, hasAvatar }
           <div className="rl-grid-auto" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", marginTop: 32 }}>
             {projects.map((p) => (
               <div key={p.id} className="card" style={{ overflow: "hidden", display: "flex", flexDirection: "column" }}>
-                <div className="rl-shot" style={{ aspectRatio: "16 / 10" }}>{host(p.link)}</div>
+                <div className="rl-shot" style={{ aspectRatio: "16 / 10" }}>{host(p.link) || "self-hosted"}</div>
                 <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
                     <span style={{ fontWeight: 600, fontSize: 18 }}>{p.name}</span>
