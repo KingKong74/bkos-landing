@@ -35,7 +35,7 @@ Everything is editable at **/admin**: all page text (headings, buttons, labels, 
 - Uploaded files are served from `/files/<resume|avatar|hero>`. A file committed as `public/resume.pdf`, `public/avatar.jpg` or `public/hero.jpg` is used as a fallback when nothing is uploaded.
 - **Download JSON** in the admin panel backs up the text content (not the uploads).
 
-Project cards automatically load public webpage screenshots through Thum.io. The first capture can take a few seconds; a domain label remains visible if it fails. Set **Preview image URL (optional)** in the admin Projects tab to use your own screenshot (including a path under `public/`) instead. Private sites show their public login page unless you supply a screenshot.
+Project cards use a bundled screenshot for moniqr and Thum.io for other public URLs, with a 20-second loading timeout. BK-OS and Stack block automated screenshots through Cloudflare, so they show a fallback until a custom image is supplied. Set **Preview image URL (optional)** in the admin Projects tab to use your own screenshot (including a path under `public/`) instead. Private sites show their public login page unless you supply a screenshot.
 
 ## Hidden admin panel
 
