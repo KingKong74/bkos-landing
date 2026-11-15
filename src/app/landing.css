@@ -21,6 +21,7 @@
   --page: #15181D; --bg: #080F1B; --surf: #0E1828; --glass: rgba(14,24,40,.72);
   --line: #1D2A3E; --ink: #E7EDF5; --mute: #93A1B5; --pri: #329DD2; --acc: #ff4c2b;
   --onpri: #080F1B; --soft: #13243A; --sky: #0D1D33;
+  background-image: linear-gradient(135deg, color-mix(in srgb, var(--pri) 45%, var(--page)) 0%, color-mix(in srgb, var(--pri) 20%, var(--page)) 50%, var(--page) 100%);
 }
 .rl h1, .rl h2, .rl h3 { font-family: var(--sans); }
 .rl a:hover { text-decoration: underline; }
