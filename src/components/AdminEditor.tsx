@@ -4,7 +4,9 @@
 // (/api/admin/content) and the public site shows it on the next page load.
 
 import { useEffect, useRef, useState } from "react";
-import { DEFAULT_CONTENT, type SiteContent, type CAModule, type Copy, type Sections } from "@/lib/content";
+import { mergeContent, type SiteContent, type CAModule, type Copy, type Sections } from "@/lib/content";
+import { ProjectImageUpload } from "./ProjectImageUpload";
+import { AllContentEditor } from "./AllContentEditor";
 
 const SECTION_LABELS: [keyof Sections, string][] = [
   ["whatIDo", "What I do"], ["howIWork", "How I work"], ["experience", "Experience"], ["projects", "Selected projects"],
@@ -71,7 +73,7 @@ function List<T>({ items, onChange, title, blank, children, addLabel }: {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       {items.map((item, i) => (
-        <details key={i} className="ad-item">
+        <details key={i} className="ad-item" open>
           <summary>
             <span style={{ fontWeight: 600, flex: 1, minWidth: 0 }}>{title(item) || "Untitled"}</span>
             <span style={{ display: "flex", gap: 6 }} onClick={(e) => e.preventDefault()}>
@@ -105,19 +107,32 @@ const uid = (p: string) => `${p}-${Math.random().toString(36).slice(2, 8)}`;
 // ─── Editor ──────────────────────────────────────────────────────────────────
 
 const TABS = [
-  ["home", "Home page"], ["resume", "Resume"], ["projects", "Projects"], ["contact", "Contact"],
+  ["all", "All writing"], ["home", "Home page"], ["resume", "Resume"], ["projects", "Projects"], ["contact", "Contact"],
   ["site", "Site-wide"], ["files", "Files"], ["backup", "Backup"],
 ] as const;
 type Tab = (typeof TABS)[number][0];
 
 export function AdminEditor({ initial, hasSaved, filesPanel }: { initial: SiteContent; hasSaved: boolean; filesPanel: React.ReactNode }) {
-  const [tab, setTab] = useState<Tab>("home");
+  const [tab, setTab] = useState<Tab>("all");
   const [draft, setDraft] = useState<SiteContent>(initial);
   const [saved, setSaved] = useState(JSON.stringify(initial));
   const [usingDefaults, setUsingDefaults] = useState(!hasSaved);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ text: string; err?: boolean } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [recovery, setRecovery] = useState<SiteContent | null>(null);
+  const [draftReady, setDraftReady] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("bkos-admin-draft");
+      if (stored) {
+        const previous = mergeContent(JSON.parse(stored));
+        if (JSON.stringify(previous) !== JSON.stringify(initial)) setRecovery(previous);
+      }
+    } catch { /* Local recovery is optional. */ }
+    setDraftReady(true);
+  }, [initial]);
 
   const dirty = JSON.stringify(draft) !== saved;
   const set = (patch: Partial<SiteContent>) => setDraft((d) => ({ ...d, ...patch }));
@@ -128,9 +143,19 @@ export function AdminEditor({ initial, hasSaved, filesPanel }: { initial: SiteCo
     return () => window.removeEventListener("beforeunload", warn);
   }, [dirty]);
 
+  useEffect(() => {
+    if (!draftReady || recovery) return;
+    const timeout = setTimeout(() => {
+      try {
+        if (dirty) localStorage.setItem("bkos-admin-draft", JSON.stringify(draft));
+        else localStorage.removeItem("bkos-admin-draft");
+      } catch { /* The server save still works if local storage is unavailable. */ }
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [draft, dirty, draftReady, recovery]);
+
   function flash(text: string, err = false) {
     setMsg({ text, err });
-    setTimeout(() => setMsg(null), 4000);
   }
 
   async function request(method: "PUT" | "DELETE", body?: SiteContent) {
@@ -157,7 +182,8 @@ export function AdminEditor({ initial, hasSaved, filesPanel }: { initial: SiteCo
   function importJson(json: string) {
     try {
       const parsed = JSON.parse(json);
-      setDraft({ ...DEFAULT_CONTENT, ...parsed });
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("Invalid content");
+      setDraft(mergeContent(parsed));
       flash("Imported into the editor. Review, then Save.");
     } catch {
       flash("Import failed: invalid JSON", true);
@@ -182,16 +208,31 @@ export function AdminEditor({ initial, hasSaved, filesPanel }: { initial: SiteCo
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <p className="mute" style={{ margin: 0, fontSize: 14 }}>
-        Each tab matches a part of the site. Edit anything, then hit <strong>Save</strong>. Changes go live for everyone immediately.
-        {usingDefaults && " Nothing saved yet, so the site is showing the defaults from the code."}
-      </p>
+      <div className="ad-savebar ad-savebar-top">
+        <div>
+          <strong>{dirty ? "You have unpublished changes" : "Content is up to date"}</strong>
+          <div className="mute" style={{ fontSize: 13 }}>Edit below, then Save & publish to update the public site.</div>
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          <a className="ad-btn" href={`/#${["home", "resume", "projects", "contact"].includes(tab) ? tab : "home"}`} target="_blank" rel="noreferrer">View published site ↗</a>
+          <button type="button" className="btn btn-acc" disabled={!dirty || busy} onClick={() => request("PUT", draft)}>{busy ? "Publishing…" : "Save & publish"}</button>
+        </div>
+      </div>
+      {msg && <div role={msg.err ? "alert" : "status"} className="card" style={{ padding: 14, color: msg.err ? "var(--acc)" : "var(--ink)" }}>{msg.text}</div>}
+      {recovery && <div className="card" style={{ padding: 16 }}>
+        <p style={{ marginTop: 0 }}>Unsaved edits from your last visit are available.</p>
+        <button type="button" className="ad-btn" onClick={() => { setDraft(recovery); setRecovery(null); }}>Restore edits</button>{" "}
+        <button type="button" className="ad-btn" onClick={() => { setRecovery(null); try { localStorage.removeItem("bkos-admin-draft"); } catch {} }}>Dismiss</button>
+      </div>}
 
       <nav className="ad-tabs" aria-label="Editor sections">
         {TABS.map(([id, label]) => (
           <button key={id} type="button" className="rl-tab" aria-current={tab === id ? "page" : undefined} onClick={() => setTab(id)}>{label}</button>
         ))}
       </nav>
+
+      <fieldset disabled={busy} className="ad-editor-fields">
+      {tab === "all" && <AllContentEditor content={draft} onChange={setDraft} />}
 
       {tab === "home" && (<>
         <Section title="Hero" hint="Top of the home page. Your name is under Site-wide.">
@@ -213,6 +254,7 @@ export function AdminEditor({ initial, hasSaved, filesPanel }: { initial: SiteCo
                 <>
                   <Text label="Number" value={p.n} onChange={(v) => s({ n: v })} />
                   <Text label="Title" value={p.title} onChange={(v) => s({ title: v })} />
+                  <label className="ad-field"><span>Colour</span><select className="ad-input" value={p.tone} onChange={(e) => s({ tone: e.target.value as "pri" | "acc" })}><option value="pri">Primary</option><option value="acc">Accent</option></select></label>
                   <Text label="Hero label" value={p.label} onChange={(v) => s({ label: v })} />
                   <Text label="Short text (over the hero image)" value={p.short} onChange={(v) => s({ short: v })} multiline />
                   <Text label="Card text" value={p.body} onChange={(v) => s({ body: v })} multiline />
@@ -396,6 +438,7 @@ export function AdminEditor({ initial, hasSaved, filesPanel }: { initial: SiteCo
                 <Text label="Tagline" value={p.tagline} onChange={(v) => s({ tagline: v })} wide />
                 <Text label="Link" value={p.link ?? ""} placeholder="https://" onChange={(v) => s({ link: v || undefined })} />
                 <Text label="Preview image URL (optional)" value={p.previewImage ?? ""} placeholder="/projects/screenshot.jpg or https://…" onChange={(v) => s({ previewImage: v || undefined })} wide />
+                <ProjectImageUpload value={p.previewImage} onChange={(url) => s({ previewImage: url })} onBusyChange={setBusy} />
                 <Csv label="Tech" value={p.tech} onChange={(v) => s({ tech: v })} />
                 <Text label="What I learned" value={p.learned ?? ""} onChange={(v) => s({ learned: v || undefined })} multiline />
                 <label className="ad-check"><input type="checkbox" checked={p.visible} onChange={(e) => s({ visible: e.target.checked })} /> Visible on the site</label>
@@ -472,6 +515,7 @@ export function AdminEditor({ initial, hasSaved, filesPanel }: { initial: SiteCo
         </Section>
       )}
 
+      </fieldset>
       <div className="ad-savebar">
         <span className="mono" style={{ fontSize: 13, color: msg?.err ? "var(--acc)" : dirty ? "var(--acc)" : "var(--mute)" }}>
           {msg?.text ?? (dirty ? "Unsaved changes" : "All changes saved")}
@@ -479,7 +523,7 @@ export function AdminEditor({ initial, hasSaved, filesPanel }: { initial: SiteCo
         <div style={{ display: "flex", gap: 8 }}>
           <button type="button" className="ad-btn" disabled={!dirty || busy} onClick={() => setDraft(JSON.parse(saved))}>Discard</button>
           <button type="button" className="btn btn-acc" style={{ padding: "8px 20px", fontSize: 14 }} disabled={!dirty || busy} onClick={() => request("PUT", draft)}>
-            {busy ? "Saving…" : "Save"}
+            {busy ? "Publishing…" : "Save & publish"}
           </button>
         </div>
       </div>

@@ -33,29 +33,32 @@ export default async function AdminPage() {
 
   return (
     <AdminShell>
-      <main style={{ maxWidth: 960, margin: "0 auto", padding: "40px 24px 72px", display: "flex", flexDirection: "column", gap: 40 }}>
+      <main style={{ maxWidth: 1160, margin: "0 auto", padding: "40px 24px 72px", display: "flex", flexDirection: "column", gap: 40 }}>
         <div>
           <div className="eyebrow">Admin</div>
-          <h1 className="h2" style={{ marginTop: 6 }}>Site status and content</h1>
+          <h1 className="h2" style={{ marginTop: 6 }}>Manage your website</h1>
         </div>
-
-        <section>
-          <div className="eyebrow" style={{ marginBottom: 12 }}>Status</div>
-          <div className="rl-grid-auto" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(200px, 100%), 1fr))", gap: 12 }}>
-            {status.map((c) => (
-              <div key={c.label} className="card" style={{ padding: 18 }}>
-                <div className="mono mute" style={{ fontSize: 12 }}>{c.label}</div>
-                <div style={{ fontSize: 22, fontWeight: 600, marginTop: 6, color: c.ok === false ? "var(--acc)" : "var(--ink)" }}>{c.value}</div>
-                <div className="mono mute" style={{ fontSize: 12, marginTop: 4 }}>{c.sub}</div>
-              </div>
-            ))}
-          </div>
-        </section>
 
         <section>
           <div className="eyebrow" style={{ marginBottom: 12 }}>Content</div>
           <AdminEditor initial={getContent()} hasSaved={hasSavedContent()} filesPanel={<AdminFiles initial={mediaStatus()} />} />
         </section>
+
+        <details className="card" style={{ padding: 20 }}>
+          <summary style={{ cursor: "pointer", fontWeight: 600 }}>Site status & technical details</summary>
+          <section>
+            <div className="eyebrow" style={{ marginBottom: 12 }}>Status</div>
+            <div className="rl-grid-auto" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(200px, 100%), 1fr))", gap: 12 }}>
+              {status.map((c) => (
+                <div key={c.label} className="card" style={{ padding: 18 }}>
+                  <div className="mono mute" style={{ fontSize: 12 }}>{c.label}</div>
+                  <div style={{ fontSize: 22, fontWeight: 600, marginTop: 6, color: c.ok === false ? "var(--acc)" : "var(--ink)" }}>{c.value}</div>
+                  <div className="mono mute" style={{ fontSize: 12, marginTop: 4 }}>{c.sub}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </details>
 
         <section>
           <div className="eyebrow" style={{ marginBottom: 12 }}>Links</div>

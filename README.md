@@ -28,6 +28,8 @@ src/
 
 ## Editing content
 
+**/admin** opens directly into a searchable **All writing** editor. Search any wording or field name to edit it; page tabs provide add, delete and reorder controls with fields open by default. **Save & publish** applies the draft to the public site, with a persistent result message. Unsaved drafts are backed up in the browser and can be restored after a reload.
+
 Everything is editable at **/admin**: all page text (headings, buttons, labels, footer, Google title/description), profile, experience, CA modules, degrees, skills, projects, contacts, the home-page cards, show/hide switches for each home section, and the resume PDF / headshot / hero image uploads. Hit **Save** and it's live for everyone immediately (uploads apply instantly).
 
 - Saved content: `$CONTENT_DIR/content.json`; uploads: `$CONTENT_DIR/uploads/`. In the container that's `/app/data`, a Docker volume (`bkoslanding-content`) mounted by Dokploy, so it survives redeploys.
@@ -35,7 +37,7 @@ Everything is editable at **/admin**: all page text (headings, buttons, labels, 
 - Uploaded files are served from `/files/<resume|avatar|hero>`. A file committed as `public/resume.pdf`, `public/avatar.jpg` or `public/hero.jpg` is used as a fallback when nothing is uploaded.
 - **Download JSON** in the admin panel backs up the text content (not the uploads).
 
-Project cards use a bundled screenshot for moniqr and Thum.io for other public URLs, with a 20-second loading timeout. BK-OS and Stack block automated screenshots through Cloudflare, so they show a fallback until a custom image is supplied. Set **Preview image URL (optional)** in the admin Projects tab to use your own screenshot (including a path under `public/`) instead. Private sites show their public login page unless you supply a screenshot.
+Project cards use a bundled screenshot for moniqr and Thum.io for other public URLs, with a 20-second loading timeout. BK-OS and Stack block automated screenshots through Cloudflare, so they show a fallback until a custom image is supplied. Use **Upload project screenshot** in the admin Projects tab or set **Preview image URL (optional)** to use your own screenshot. Uploaded project images are stored under `$CONTENT_DIR/project-images/` and take effect when you Save & publish. Private sites show their public login page unless you supply a screenshot.
 
 ## Hidden admin panel
 
