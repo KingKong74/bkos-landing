@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 export type Theme = "light" | "dark";
 const THEME_KEY = "bkos-theme";
-const PAGE_BG: Record<Theme, string> = { light: "#EDF3F6", dark: "#080F1B" };
+const PAGE_BG: Record<Theme, string> = { light: "#FFFFFF", dark: "#15181D" };
 
 /** Light/dark theme shared by the landing page and admin, remembered per browser. */
 export function useTheme(): [Theme, () => void] {

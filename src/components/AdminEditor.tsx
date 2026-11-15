@@ -395,6 +395,7 @@ export function AdminEditor({ initial, hasSaved, filesPanel }: { initial: SiteCo
                 <Text label="Status" value={p.status} onChange={(v) => s({ status: v })} />
                 <Text label="Tagline" value={p.tagline} onChange={(v) => s({ tagline: v })} wide />
                 <Text label="Link" value={p.link ?? ""} placeholder="https://" onChange={(v) => s({ link: v || undefined })} />
+                <Text label="Preview image URL (optional)" value={p.previewImage ?? ""} placeholder="/projects/screenshot.jpg or https://…" onChange={(v) => s({ previewImage: v || undefined })} wide />
                 <Csv label="Tech" value={p.tech} onChange={(v) => s({ tech: v })} />
                 <Text label="What I learned" value={p.learned ?? ""} onChange={(v) => s({ learned: v || undefined })} multiline />
                 <label className="ad-check"><input type="checkbox" checked={p.visible} onChange={(e) => s({ visible: e.target.checked })} /> Visible on the site</label>

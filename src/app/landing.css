@@ -1,13 +1,16 @@
 /* ─── Resume landing (v2) ─────────────────────────────────────────────────── */
 
 .rl {
-  --page: #EDF3F6; --bg: #FCFFFF; --surf: #FCFFFF; --glass: rgba(252,255,255,.72);
+  --page: #FFFFFF; --bg: #FCFFFF; --surf: #FCFFFF; --glass: rgba(252,255,255,.72);
   --line: #D8E3E9; --ink: #0A1824; --mute: #4D5F6C; --pri: #0593c6; --acc: #d83995;
   --onpri: #FCFFFF; --soft: #E2F0F6; --sky: #DCEFF8;
   --sans: 'IBM Plex Sans', system-ui, sans-serif;
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
   min-height: 100vh;
-  background: var(--page);
+  background-color: var(--page);
+  background-image: linear-gradient(135deg, color-mix(in srgb, var(--pri) 20%, var(--page)) 0%, color-mix(in srgb, var(--pri) 7%, var(--page)) 45%, var(--page) 100%);
+  background-attachment: fixed;
+  background-size: 100vw 100vh;
   color: var(--ink);
   font-family: var(--sans);
   font-size: 15px;
@@ -15,7 +18,7 @@
   transition: background .25s ease, color .25s ease;
 }
 .rl[data-th="dark"] {
-  --page: #080F1B; --bg: #080F1B; --surf: #0E1828; --glass: rgba(14,24,40,.72);
+  --page: #15181D; --bg: #080F1B; --surf: #0E1828; --glass: rgba(14,24,40,.72);
   --line: #1D2A3E; --ink: #E7EDF5; --mute: #93A1B5; --pri: #329DD2; --acc: #ff4c2b;
   --onpri: #080F1B; --soft: #13243A; --sky: #0D1D33;
 }
@@ -57,7 +60,7 @@
 .rl { touch-action: manipulation; } /* no double-tap zoom, so rapid taps on the admin corner register */
 
 /* Hero */
-.rl-hero { position: relative; overflow: hidden; background: radial-gradient(ellipse 80% 60% at 50% 70%, var(--sky), transparent 70%); }
+.rl-hero { position: relative; overflow: hidden; }
 .rl-hero-in { max-width: 1200px; margin: 0 auto; padding: 88px 24px 72px; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .rl-hero h1 { margin: 20px 0 0; font-size: clamp(44px, 7vw, 84px); font-weight: 600; line-height: 1.02; letter-spacing: -0.03em; }
 .rl-hero-sub { margin: 18px 0 0; font-size: clamp(17px, 2vw, 21px); color: var(--mute); max-width: 660px; text-wrap: pretty; }
@@ -157,3 +160,9 @@
 .rl .ad-module select[data-status="complete"] { color: var(--pri); }
 .rl .ad-module select[data-status="in progress"] { color: var(--acc); }
 @media (max-width: 600px) { .rl .ad-module { grid-template-columns: 1fr 1fr; } .rl .ad-module > span { grid-column: 1 / -1; } }
+
+/* Project screenshots retain the domain label while loading or unavailable. */
+.rl-shot { position: relative; overflow: hidden; }
+.rl-shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; transition: opacity .2s ease; }
+.rl-shot img[data-loaded="true"] { opacity: 1; }
+.rl-shot-label { position: relative; z-index: 1; padding: 4px 8px; border-radius: 6px; background: var(--surf); color: var(--mute); max-width: 100%; overflow-wrap: anywhere; }

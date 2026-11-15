@@ -180,6 +180,7 @@ export interface Project {
   tech: string[];
   status: string;
   link?: string;
+  previewImage?: string; // optional screenshot URL; otherwise generated from link
   learned?: string; // shown on the Projects tab
   visible: boolean;
 }

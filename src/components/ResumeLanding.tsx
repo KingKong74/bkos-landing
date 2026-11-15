@@ -7,6 +7,7 @@ import type { SiteContent } from "@/lib/content";
 import type { Weather } from "@/lib/weather";
 import { AdminLoginModal } from "./AdminLoginModal";
 import { ThemeToggle } from "./ThemeToggle";
+import { ProjectPreview } from "./ProjectPreview";
 
 type Page = "home" | "resume" | "projects" | "contact";
 
@@ -270,7 +271,7 @@ export function ResumeLanding({ content, weather, media }: Props) {
               <div className="rl-grid-auto" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))", marginTop: 32 }}>
                 {projects.map((p) => (
                   <a key={p.id} data-reveal href={p.link} target={p.link ? "_blank" : undefined} rel="noreferrer" className="rl-proj card-link" style={p.link ? undefined : { cursor: "default" }}>
-                    <div className="rl-shot" style={{ aspectRatio: "4 / 3" }}>{host(p.link) || c.noLinkLabel}</div>
+                    <ProjectPreview key={`${p.link}-${p.previewImage}`} project={p} noLinkLabel={c.noLinkLabel} aspectRatio="4 / 3" />
                     <div style={{ padding: "18px 20px" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
                         <span style={{ fontWeight: 600, fontSize: 18 }}>{p.name}</span>
@@ -466,7 +467,7 @@ export function ResumeLanding({ content, weather, media }: Props) {
           <div className="rl-grid-auto" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", marginTop: 32 }}>
             {projects.map((p) => (
               <div key={p.id} className="card" style={{ overflow: "hidden", display: "flex", flexDirection: "column" }}>
-                <div className="rl-shot" style={{ aspectRatio: "16 / 10" }}>{host(p.link) || c.noLinkLabel}</div>
+                <ProjectPreview key={`${p.link}-${p.previewImage}`} project={p} noLinkLabel={c.noLinkLabel} />
                 <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
                     <span style={{ fontWeight: 600, fontSize: 18 }}>{p.name}</span>
